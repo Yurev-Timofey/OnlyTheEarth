@@ -20,7 +20,7 @@ import objects.BackgroundActor;
 
 public class MainMenuScreen implements Screen {
 
-    final MyGame game;
+    private final MyGame game;
     private Music mainTheme;
     private TextButton play, settings;
     private Stage stage;
@@ -34,12 +34,10 @@ public class MainMenuScreen implements Screen {
     public MainMenuScreen(final MyGame myGame) {
         game = myGame;
 
-        float aspectRatio = Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
-
         String path;
-        if (aspectRatio == 2)
+        if (game.aspectRatio > 1.9)
             path = "18_9";
-        else if (aspectRatio > 1.7)
+        else if (game.aspectRatio > 1.7)
             path = "16_9";
         else
             path = "4_3";
@@ -56,9 +54,9 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(viewport);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();  //Определяем стиль кнопок
-        textButtonStyle.font = game.menuFont;                                               //Шрифт
+        textButtonStyle.font = game.menuFont;
 
-//        Skin skin = new Skin();                                                        //Картинка кнопки
+//        Skin skin = new Skin();
 //        skin.add("button", Gdx.files.internal("images/button.jpg"));
 //        textButtonStyle.up = skin.getDrawable("button");
 //        textButtonStyle.down = skin.getDrawable("button");
@@ -67,12 +65,8 @@ public class MainMenuScreen implements Screen {
         Texture buttonImg = assetManager.get("images/button.png");
         buttonImg.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         Sprite buttonSprite = new Sprite(buttonImg);
-//        if (aspectRatio == 2)
-//            buttonSprite.setSize(buttonSprite.getWidth()  * (float)(aspectRatio * 6), buttonSprite.getHeight()*(float)(aspectRatio * 6));
-//        else if (aspectRatio > 1.7)
-//            buttonSprite.setSize(buttonSprite.getWidth()  * (float)(aspectRatio * 6.5), buttonSprite.getHeight()*(float)(aspectRatio * 6.5));
-//        else
-            buttonSprite.setSize(buttonSprite.getWidth()  * (float)(aspectRatio * 6), buttonSprite.getHeight()*(float)(aspectRatio * 6));
+
+        buttonSprite.setSize(buttonSprite.getWidth() * 6 + Gdx.graphics.getWidth() / 10, buttonSprite.getHeight() * 7 + Gdx.graphics.getHeight() / 15);
         //fixme после нового спрайта нормально выставить соотнощение
         SpriteDrawable button = new SpriteDrawable(buttonSprite);
         textButtonStyle.up = button;
@@ -83,7 +77,7 @@ public class MainMenuScreen implements Screen {
         play.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-//                Gdx.input.vibrate(20);     //TODO
+                Gdx.input.vibrate(40);
                 return true;
             }
 
@@ -98,28 +92,23 @@ public class MainMenuScreen implements Screen {
         settings.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-//                Gdx.input.vibrate(20);    //TODO
+                Gdx.input.vibrate(40);
                 return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(new SettingsScreen(game));
+//                game.setScreen(new SettingsScreen(game));
                 dispose();
             }
         });
 
         BackgroundActor background = new BackgroundActor(assetManager.get(("images/mainMenuBack" + path + ".png"), Texture.class), viewport.getWorldWidth(), viewport.getWorldHeight());
-
-//        Sprite backgroundSprite = new Sprite(assetManager.get(("images/mainMenuBack" + path + ".png"), Texture.class));
-////        backgroundSprite.setSize((int)viewport.getWorldWidth(),(int) viewport.getWorldHeight());
-//        SimpleActor background = new SimpleActor(backgroundSprite, viewport.getWorldWidth(), viewport.getWorldHeight());
-
         background.setPosition(0, 0);
 
 
-        settings.setPosition(((viewport.getScreenWidth() - play.getWidth()) / 2), settings.getHeight() / 3);
-        play.setPosition(((viewport.getScreenWidth() - play.getWidth()) / 2), settings.getY() + play.getHeight() + 5);
+        settings.setPosition(((viewport.getScreenWidth() - settings.getWidth()) / 2), settings.getHeight() / 4);
+        play.setPosition(((viewport.getScreenWidth() - play.getWidth()) / 2), settings.getY() + play.getHeight() + 7);
 
         stage.addActor(background);
         stage.addActor(play);
@@ -128,7 +117,8 @@ public class MainMenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);  // Устанавливаем нашу сцену основным процессором для ввода (нажатия, касания, клавиатура etc.)
 //        Gdx.input.setCatchBackKey(true); // Это нужно для того, чтобы пользователь возвращался назад, в случае нажатия на кнопку Назад на своем устройстве
     }
-    public void loadAssets(String path){
+
+    public void loadAssets(String path) {
         assetManager = new AssetManager();
 
         assetManager.load("music/mainTheme.mp3", Music.class);

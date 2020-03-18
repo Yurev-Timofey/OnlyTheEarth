@@ -11,9 +11,7 @@ import screens.*;
 public class MyGame extends Game {
     public BitmapFont gameFont;
     public BitmapFont menuFont;
-    public MainMenuScreen menu;
 
-    //    public static final float SCREEN_WIDTH = 640f;
     public static final float SCREEN_WIDTH = 720f;
     public static final float SCREEN_HEIGHT = 360f;
     public static float VIEWPORT_LEFT;
@@ -23,8 +21,7 @@ public class MyGame extends Game {
 
     @Override
     public void create() {
-//        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); //Вызываем resize для вычисления aspectRatio
-        String s = Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight();
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); //Вызываем resize для вычисления aspectRatio
 
         //Создание шрифта игры
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/pixelSurNormal.ttf"));
@@ -38,8 +35,7 @@ public class MyGame extends Game {
         menuFont = generator.generateFont(param);
         generator.dispose(); // Уничтожаем наш генератор за ненадобностью.
 
-        menu = new MainMenuScreen(this);
-        setScreen(menu);   //при запуске игры открываем экран с меню
+        setScreen(new MainMenuScreen(this));   //при запуске игры открываем экран с меню
     }
 
     @Override

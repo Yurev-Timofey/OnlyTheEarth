@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.vsu.game" >
 
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -9,6 +11,7 @@
         android:appCategory="game"
         android:label="@string/app_name"
         android:theme="@style/GdxTheme" >
+
         <activity
             android:name="com.vsu.game.AndroidLauncher"
             android:label="@string/app_name" 

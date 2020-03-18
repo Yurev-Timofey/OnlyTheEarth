@@ -18,7 +18,7 @@ android {
     }
     defaultConfig {
         applicationId "com.vsu.game"
-        minSdkVersion 14
+        minSdkVersion var
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
