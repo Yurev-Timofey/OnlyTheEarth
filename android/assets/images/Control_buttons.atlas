@@ -1,0 +1,29 @@
+
+Control_buttons.png
+size: 128,64
+format: RGBA8888
+filter: Linear,Nearest
+repeat: none
+Button_left
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  split: 0, 0, 0, 0
+  pad: 0, 0, 0, 0
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_right
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_up
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

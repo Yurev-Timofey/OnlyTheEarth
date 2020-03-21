@@ -1,4 +1,4 @@
-package objects;
+package com.vsu.game.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -12,6 +12,10 @@ public class BackgroundActor extends Actor {
         backgroundTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest); //Тип фильтрации NEAR для пиксель арта
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setSize(screenWidth, screenHeight);
+    }
+    public BackgroundActor(Texture backgroundTexture) {
+        backgroundTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest); //Тип фильтрации NEAR для пиксель арта
+        backgroundSprite = new Sprite(backgroundTexture);
     }
 
     @Override

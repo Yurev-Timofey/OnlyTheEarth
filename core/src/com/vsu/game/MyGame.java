@@ -5,8 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.vsu.game.screens.MainMenuScreen;
 
-import screens.*;
 
 public class MyGame extends Game {
     public BitmapFont gameFont;
@@ -16,8 +16,11 @@ public class MyGame extends Game {
     public static final float SCREEN_HEIGHT = 360f;
     public static float VIEWPORT_LEFT;
     public static float VIEWPORT_RIGHT;
+    public static float VIEWPORT_BOTTOM;
+    public static float VIEWPORT_TOP;
     public float aspectRatio;
     public static float viewportWidth;
+    public static float viewportHeight;
 
     @Override
     public void create() {
@@ -44,8 +47,17 @@ public class MyGame extends Game {
 
         aspectRatio = (float) width / height;           //Вычисление соотношения экрана для правильного маштаба
         viewportWidth = SCREEN_HEIGHT * aspectRatio;
-
-        VIEWPORT_LEFT = (SCREEN_WIDTH - viewportWidth) / 2;   //Левая и правая граница вьюпорта для привязки к краям экрана
-        VIEWPORT_RIGHT = VIEWPORT_LEFT + viewportWidth;
+        viewportHeight = SCREEN_WIDTH / aspectRatio;
+        if (aspectRatio > 2) {
+            VIEWPORT_LEFT = 0;
+            VIEWPORT_RIGHT = viewportWidth;
+            VIEWPORT_BOTTOM = (SCREEN_HEIGHT - viewportHeight) / 2;
+            VIEWPORT_TOP = VIEWPORT_BOTTOM + viewportHeight;
+        } else {
+            VIEWPORT_LEFT = (SCREEN_WIDTH - viewportWidth) / 2;   //Левая и правая граница вьюпорта для привязки к краям экрана
+            VIEWPORT_RIGHT = VIEWPORT_LEFT + viewportWidth;
+            VIEWPORT_BOTTOM = 0;
+            VIEWPORT_TOP = viewportHeight;
+        }
     }
 }
