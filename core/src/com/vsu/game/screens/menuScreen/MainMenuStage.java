@@ -1,11 +1,7 @@
-package com.vsu.game.screens;
+package com.vsu.game.screens.menuScreen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,42 +10,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.vsu.game.MyGame;
-
 import com.vsu.game.objects.BackgroundActor;
+import com.vsu.game.screens.gameScreen.GameScreen;
 
-public class MainMenuScreen implements Screen {
-
-    private final MyGame game;
-    private Stage stage;
+public class MainMenuStage extends Stage{
 
 
-    private final OrthographicCamera camera;
-    private final FillViewport viewport;
-    private AssetManager assetManager;
-
-
-    public MainMenuScreen(final MyGame game) {
-        this.game = game;
-
-        String path;
-        if (game.aspectRatio > 1.9)
-            path = "18_9";
-        else if (game.aspectRatio > 1.7)
-            path = "16_9";
-        else
-            path = "4_3";
-
-        loadAssets(path);
-
-        Music mainTheme = assetManager.get("music/mainTheme.mp3", Music.class); //Музыка
-        mainTheme.play();
-        mainTheme.setLooping(true);
-
-        camera = new OrthographicCamera();
-        viewport = new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-        stage = new Stage(viewport);
+    public MainMenuStage(FitViewport viewport, final MyGame game, AssetManager assetManager, String path){
+        setViewport(viewport);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();  //Определяем стиль кнопок
         textButtonStyle.font = game.menuFont;
@@ -58,7 +28,7 @@ public class MainMenuScreen implements Screen {
         buttonImg.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         Sprite buttonSprite = new Sprite(buttonImg);
 
-        buttonSprite.setSize(buttonSprite.getWidth() * 6 + Gdx.graphics.getWidth() / 10, buttonSprite.getHeight() * 7 + Gdx.graphics.getHeight() / 15);
+        buttonSprite.setSize(buttonSprite.getWidth() * 6 + Gdx.graphics.getWidth() / 10f, buttonSprite.getHeight() * 7 + Gdx.graphics.getHeight() / 15f);
         SpriteDrawable button = new SpriteDrawable(buttonSprite);
         textButtonStyle.up = button;
         textButtonStyle.down = button;
@@ -74,7 +44,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new GameScreen(game));
-                dispose();
+//                dispose();
             }
         });
 
@@ -89,7 +59,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 //                game.setScreen(new SettingsScreen(game));
-                dispose();
+//                dispose();
             }
         });
 
@@ -101,67 +71,19 @@ public class MainMenuScreen implements Screen {
         Table buttons = new Table();
         buttons.setFillParent(true);
         buttons.add(play);
-        buttons.row().space(viewport.getScreenWidth() / 200);
+        buttons.row().space(getWidth() / 200);
         buttons.add(settings);
         buttons.center().bottom();
-        buttons.padBottom(viewport.getScreenWidth() / 50 + game.VIEWPORT_BOTTOM);
+        buttons.padBottom(getWidth() / 50f + game.VIEWPORT_BOTTOM);
+        buttons.debug();
 
-        stage.addActor(background);
-        stage.addActor(buttons);
-    }
-
-    private void loadAssets(String path) {
-        assetManager = new AssetManager();
-
-        assetManager.load("music/mainTheme.mp3", Music.class);
-        assetManager.load("images/button.png", Texture.class);
-        assetManager.load("images/mainMenuBack" + path + ".png", Texture.class);
-
-        assetManager.finishLoading();
-    }
-
-    @Override
-    public void show() {
-        Gdx.input.setInputProcessor(stage);  // Устанавливаем нашу сцену основным процессором для ввода (нажатия, касания, клавиатура etc.)
-    }
-
-    @Override
-    public void render(float delta) {
-        camera.update();
-
-        // Очищаем экран и устанавливаем цвет фона черным
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // Рисуем сцену
-        stage.act(delta);
-        stage.draw();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height, true);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
+        addActor(background);
+        addActor(buttons);
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
-        assetManager.dispose();
-        game.dispose();
+        super.dispose();
+//        MenuScreen.dispose();
     }
 }

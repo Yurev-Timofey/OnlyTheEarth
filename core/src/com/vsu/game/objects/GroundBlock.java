@@ -1,5 +1,7 @@
 package com.vsu.game.objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -9,43 +11,49 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.XmlReader;
 
 import static com.vsu.game.Constants.PIXELS_IN_METER;
 
-public class PlayerEntity extends Actor {
+public class GroundBlock extends Actor {
+    public static final float GROUND_BLOCK_SIZE_IN_METERS = 0.4f;
+
     private Texture texture;
     private World world;
     private Body body;
     private Fixture fixture;
 
-    private boolean isAlive = true;
-    private boolean isJumping = false;
-
-    public PlayerEntity(World world, Texture texture, Vector2 position){
+    public GroundBlock(World world, Texture texture, Vector2 position) {
         this.world = world;
         this.texture = texture;
 
         BodyDef def = new BodyDef();
         def.position.set(position);
-        def.type = BodyDef.BodyType.DynamicBody;
+        def.type = BodyDef.BodyType.StaticBody;
 
         body = world.createBody(def);
 
         PolygonShape box = new PolygonShape();
-        box.setAsBox(0.5f,0.5f);
+        box.setAsBox(GROUND_BLOCK_SIZE_IN_METERS / 2, GROUND_BLOCK_SIZE_IN_METERS / 2);
         fixture = body.createFixture(box, 3);
         box.dispose();
 
-        setSize(PIXELS_IN_METER , PIXELS_IN_METER);
+        setSize(PIXELS_IN_METER * GROUND_BLOCK_SIZE_IN_METERS, PIXELS_IN_METER * GROUND_BLOCK_SIZE_IN_METERS);
+    }
+
+    public Body getBody() {
+        return body;
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        setPosition(body.getPosition().x * PIXELS_IN_METER, body.getPosition().y * PIXELS_IN_METER);
+        setPosition((body.getPosition().x - GROUND_BLOCK_SIZE_IN_METERS / 2) * PIXELS_IN_METER, (body.getPosition().y - GROUND_BLOCK_SIZE_IN_METERS / 2) * PIXELS_IN_METER);
         batch.draw(texture, getX(), getY(), getWidth(), getHeight());
     }
 
-    public void detach(){
+    public void detach() {
         body.destroyFixture(fixture);
         world.destroyBody(body);
     }
