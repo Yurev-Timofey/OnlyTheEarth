@@ -11,28 +11,34 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import com.vsu.game.Configuration;
 import com.vsu.game.MyGame;
-import com.vsu.game.objects.BackgroundActor;
+import com.vsu.game.gameLogic.objects.BackgroundActor;
 import com.vsu.game.screens.gameScreen.GameScreen;
 
-public class MainMenuStage extends Stage{
+public class MainMenuStage extends Stage {
 
 
-    public MainMenuStage(FitViewport viewport, final MyGame game, AssetManager assetManager, String path){
+    public MainMenuStage(FitViewport viewport, final MyGame game, AssetManager assetManager, String path) {
         setViewport(viewport);
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();  //Определяем стиль кнопок
+        //Фон меню
+        BackgroundActor background = new BackgroundActor(assetManager.get(("images/mainMenuBack" + path + ".png"), Texture.class), viewport.getWorldWidth(), viewport.getWorldHeight());
+        background.setPosition(0, 0);
+        addActor(background);
+
+        //Определяем стиль кнопок
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = game.menuFont;
-
         Texture buttonImg = assetManager.get("images/button.png");
-        buttonImg.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         Sprite buttonSprite = new Sprite(buttonImg);
-
-        buttonSprite.setSize(buttonSprite.getWidth() * 6 + Gdx.graphics.getWidth() / 10f, buttonSprite.getHeight() * 7 + Gdx.graphics.getHeight() / 15f);
+        buttonSprite.setSize(Gdx.graphics.getWidth() / 4f , Gdx.graphics.getWidth() / (4f *(float)buttonImg.getWidth()/buttonImg.getHeight()));
         SpriteDrawable button = new SpriteDrawable(buttonSprite);
         textButtonStyle.up = button;
         textButtonStyle.down = button;
 
+        //Кнопка "Играть"
         TextButton play = new TextButton("Играть", textButtonStyle);
         play.addListener(new ClickListener() {
             @Override
@@ -44,11 +50,12 @@ public class MainMenuStage extends Stage{
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new GameScreen(game));
-//                dispose();
+                dispose();
             }
         });
 
-        TextButton settings = new TextButton("Настройки", textButtonStyle); //Кнопка настроек
+        //Кнопка настроек
+        TextButton settings = new TextButton("Настройки", textButtonStyle);
         settings.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -63,21 +70,17 @@ public class MainMenuStage extends Stage{
             }
         });
 
-        BackgroundActor background = new BackgroundActor(assetManager.get(("images/mainMenuBack" + path + ".png"), Texture.class), viewport.getWorldWidth(), viewport.getWorldHeight());
-        background.setPosition(0, 0);
-
-//        settings.setPosition(((viewport.getScreenWidth() - settings.getWidth()) / 2), settings.getHeight() / 4);
-//        play.setPosition(((viewport.getScreenWidth() - play.getWidth()) / 2), settings.getY() + play.getHeight() + 7);
+        //Группировка кнопок в таблицу
         Table buttons = new Table();
         buttons.setFillParent(true);
+        buttons.center().bottom();
+        buttons.debug();
+
         buttons.add(play);
         buttons.row().space(getWidth() / 200);
         buttons.add(settings);
-        buttons.center().bottom();
-        buttons.padBottom(getWidth() / 50f + game.VIEWPORT_BOTTOM);
-        buttons.debug();
+        buttons.padBottom(getWidth() / 50f + Configuration.viewportBottom);
 
-        addActor(background);
         addActor(buttons);
     }
 

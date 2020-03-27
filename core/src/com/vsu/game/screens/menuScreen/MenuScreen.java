@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.vsu.game.Configuration;
 import com.vsu.game.MyGame;
 
 public class MenuScreen implements Screen {
@@ -26,9 +27,9 @@ public class MenuScreen implements Screen {
         this.game = game;
 
         String path;
-        if (game.aspectRatio > 1.9)
+        if (Configuration.aspectRatio > 1.9)
             path = "18_9";
-        else if (game.aspectRatio > 1.7)
+        else if (Configuration.aspectRatio > 1.7)
             path = "16_9";
         else
             path = "4_3";

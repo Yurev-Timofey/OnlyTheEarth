@@ -7,18 +7,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.vsu.game.screens.menuScreen.MenuScreen;
 
+import static com.vsu.game.Configuration.*;
+
 
 public class MyGame extends Game {
     public BitmapFont gameFont;
     public BitmapFont menuFont;
-
-    public static float VIEWPORT_LEFT;
-    public static float VIEWPORT_RIGHT;
-    public static float VIEWPORT_BOTTOM;
-    public static float VIEWPORT_TOP;
-    public static float aspectRatio;
-    public static float viewportWidth;
-    public static float viewportHeight;
 
     @Override
     public void create() {
@@ -27,7 +21,7 @@ public class MyGame extends Game {
         //Создание шрифта игры
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/pixelSurNormal.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = (int) (Constants.SCREEN_HEIGHT / 16.5); // Размер шрифта
+        param.size = (int) (SCREEN_HEIGHT / 16.5); // Размер шрифта
         param.mono = true; //Отключение сглаживания шрифта
         param.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>"; // Наши символы
         gameFont = generator.generateFont(param); // Генерируем шрифт
@@ -45,20 +39,20 @@ public class MyGame extends Game {
 
         aspectRatio = (float) width / height;           //Вычисление соотношения экрана для правильного маштаба
 
-        viewportHeight = Constants.SCREEN_WIDTH / aspectRatio;
+        viewportHeight = SCREEN_WIDTH / aspectRatio;
         System.out.println(viewportHeight);
         if (aspectRatio > 2) {
-            viewportWidth = Constants.SCREEN_WIDTH;
-            VIEWPORT_LEFT = 0;
-            VIEWPORT_RIGHT = viewportWidth;
-            VIEWPORT_BOTTOM = (Constants.SCREEN_HEIGHT - viewportHeight) / 2;
-            VIEWPORT_TOP = VIEWPORT_BOTTOM + viewportHeight;
+            viewportWidth = SCREEN_WIDTH;
+            viewportLeft = 0;
+            viewportRight = viewportWidth;
+            viewportBottom = (SCREEN_HEIGHT - viewportHeight) / 2;
+            viewportTop = viewportBottom + viewportHeight;
         } else {
-            viewportWidth = Constants.SCREEN_HEIGHT * aspectRatio;
-            VIEWPORT_LEFT = (Constants.SCREEN_WIDTH - viewportWidth) / 2;   //Левая и правая граница вьюпорта для привязки к краям экрана
-            VIEWPORT_RIGHT = VIEWPORT_LEFT + viewportWidth;
-            VIEWPORT_BOTTOM = 0;
-            VIEWPORT_TOP = viewportHeight;
+            viewportWidth = SCREEN_HEIGHT * aspectRatio;
+            viewportLeft = (SCREEN_WIDTH - viewportWidth) / 2;   //Левая и правая граница вьюпорта для привязки к краям экрана
+            viewportRight = viewportLeft + viewportWidth;
+            viewportBottom = 0;
+            viewportTop = viewportHeight;
         }
     }
 }

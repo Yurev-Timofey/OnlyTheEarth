@@ -9,12 +9,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -34,41 +32,38 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.vsu.game.Constants;
+import com.vsu.game.Configuration;
 import com.vsu.game.MyGame;
-import com.vsu.game.XmlParser;
-import com.vsu.game.objects.GroundBlock;
-import com.vsu.game.objects.Player;
-import com.vsu.game.objects.BackgroundActor;
-
-import java.util.Random;
+import com.vsu.game.gameLogic.objects.Player;
 
 public class GameScreen implements Screen {
 
     private final MyGame game;
-    private Stage stage;
+    private AssetManager assetManager;
+
+    private final Stage stage;
+    private Table buttonsTable;
 
     private final OrthographicCamera camera;
     private final FillViewport viewport;
-    private AssetManager assetManager;
-    private World world;
-    private Player player;
-    private Box2DDebugRenderer debugRenderer;
     private final OrthographicCamera debugCamera;
-    private Table buttonsTable;
+    private final Box2DDebugRenderer debugRenderer;
 
-    private TmxMapLoader mapLoader;
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer mapRenderer;
+    private final World world;
+    private final Player player;
+
+    //Map
+    private final TmxMapLoader mapLoader;
+    private final TiledMap map;
+    private final OrthogonalTiledMapRenderer mapRenderer;
 
     public GameScreen(MyGame game) {
         this.game = game;
         loadAssets();
 
         camera = new OrthographicCamera();
-        viewport = new FillViewport(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, camera);
+        viewport = new FillViewport(Configuration.SCREEN_WIDTH, Configuration.SCREEN_HEIGHT, camera);
         stage = new Stage(viewport);
 
 
@@ -85,19 +80,19 @@ public class GameScreen implements Screen {
         map = mapLoader.load("maps/map.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
 
-        for (MapObject object: map.getLayers().get(2).getObjects()) {
+        for (MapObject object : map.getLayers().get(2).getObjects()) {
             Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
 
             BodyDef def = new BodyDef();
             def.type = BodyDef.BodyType.StaticBody;
-            def.position.set((rectangle.getX() + rectangle.getWidth() / 2) / Constants.PIXELS_IN_METER , (rectangle.getY() +  rectangle.getHeight() / 2) / Constants.PIXELS_IN_METER) ;
+            def.position.set((rectangle.getX() + rectangle.getWidth() / 2) / Configuration.PIXELS_IN_METER, (rectangle.getY() + rectangle.getHeight() / 2) / Configuration.PIXELS_IN_METER);
 
             Body body = world.createBody(def);
 
             PolygonShape shape = new PolygonShape();
 
 
-            shape.setAsBox((rectangle.getWidth() / 2) / Constants.PIXELS_IN_METER, (rectangle.getHeight() / 2) / Constants.PIXELS_IN_METER);
+            shape.setAsBox((rectangle.getWidth() / 2) / Configuration.PIXELS_IN_METER, (rectangle.getHeight() / 2) / Configuration.PIXELS_IN_METER);
 
 
             Fixture fixture = body.createFixture(shape, 3);
@@ -135,19 +130,17 @@ public class GameScreen implements Screen {
             }
         });
 
-        /* DEBUG */
+        //DEBUG
         debugCamera = new OrthographicCamera();
-        debugCamera.setToOrtho(false, Constants.SCREEN_WIDTH / Constants.PIXELS_IN_METER,
-                Constants.SCREEN_HEIGHT / Constants.PIXELS_IN_METER);
+        debugCamera.setToOrtho(false, Configuration.SCREEN_WIDTH / Configuration.PIXELS_IN_METER,
+                Configuration.SCREEN_HEIGHT / Configuration.PIXELS_IN_METER);
         debugRenderer = new Box2DDebugRenderer();
-        /* DEBUG */
     }
 
     private void loadAssets() {
         assetManager = new AssetManager();
 
         assetManager.load("images/Control_buttons.atlas", TextureAtlas.class);
-//        assetManager.load("images/gameBackground.png", Texture.class);
         assetManager.load("images/character.png", Texture.class);
         assetManager.load("images/groundBlock.png", Texture.class);
 
@@ -195,7 +188,7 @@ public class GameScreen implements Screen {
                 player.resetVelocity();
             }
         });
-        buttonsTable.add(right).spaceRight(game.viewportWidth - (buttonsTable.getMinWidth() + PAD) * 2);
+        buttonsTable.add(right).spaceRight(Configuration.viewportWidth - (buttonsTable.getMinWidth() + PAD) * 2);
 
 
         Sprite upImg = skin.getSprite("Button_up");                                                     //Кнопка прыжка
@@ -224,8 +217,8 @@ public class GameScreen implements Screen {
         buttonsTable.add(fire);
 
         buttonsTable.bottom().left();
-        buttonsTable.padBottom(game.VIEWPORT_BOTTOM + PAD);
-        buttonsTable.padLeft(game.VIEWPORT_LEFT + PAD);
+        buttonsTable.padBottom(Configuration.viewportBottom + PAD);
+        buttonsTable.padLeft(Configuration.viewportLeft + PAD);
 
         stage.addActor(buttonsTable);
     }
@@ -239,25 +232,28 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         camera.update();
-        debugCamera.update();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-        if (player.getX() + 60 - game.VIEWPORT_LEFT >= game.viewportWidth / 2/*TODO*/ && player.isAlive()) {
-            camera.position.set(player.getX() + 60, camera.position.y, 0);
-            debugCamera.position.set((player.getX() + 60) / Constants.PIXELS_IN_METER, debugCamera.position.y, 0);
-            buttonsTable.setPosition(player.getX() - Constants.SCREEN_WIDTH / 2 + 60, buttonsTable.getY());
+        if ((player.getX() + (float) (Player.getSizeInPixels() / 2) - Configuration.viewportLeft >= Configuration.viewportWidth / 2) &&
+                player.isAlive()) {
+            camera.position.set(player.getX() + (float) (Player.getSizeInPixels() / 2), camera.position.y, 0);
+            debugCamera.position.set((player.getX() + (float) (Player.getSizeInPixels() / 2)) / Configuration.PIXELS_IN_METER, debugCamera.position.y, 0);
+            buttonsTable.setPosition(player.getX() - Configuration.SCREEN_WIDTH / 2 + 60, buttonsTable.getY());
         }
+
         mapRenderer.setView(camera);
         mapRenderer.render();
+
         stage.act(delta);
         world.step(delta, 6, 2);
         stage.draw();
 
+        //DEBUG
+        debugCamera.update();
         debugRenderer.render(world, debugCamera.combined);
-
     }
 
     @Override
