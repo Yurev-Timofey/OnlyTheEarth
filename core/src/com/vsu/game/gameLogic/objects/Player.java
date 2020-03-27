@@ -1,4 +1,4 @@
-package com.vsu.game.objects;
+package com.vsu.game.gameLogic.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import static com.vsu.game.Constants.PIXELS_IN_METER;
+import static com.vsu.game.Configuration.PIXELS_IN_METER;
 
 public class Player extends Actor {
     private Texture texture;
@@ -23,6 +23,7 @@ public class Player extends Actor {
     private float velocity;
 
     private static final float SIZE_IN_METERS = 1f;
+    private static final int SIZE_IN_PIXELS = (int)(PIXELS_IN_METER * SIZE_IN_METERS);
 
     public Player(World world, Texture texture, Vector2 position){
         this.world = world;
@@ -39,7 +40,7 @@ public class Player extends Actor {
         fixture = body.createFixture(box, 20);
         box.dispose();
 
-        setSize(PIXELS_IN_METER * SIZE_IN_METERS, PIXELS_IN_METER * SIZE_IN_METERS);
+        setSize(SIZE_IN_PIXELS, SIZE_IN_PIXELS);
     }
 
     public Body getBody() {
@@ -85,5 +86,9 @@ public class Player extends Actor {
 
     public void setAlive(boolean alive) {
         isAlive = alive;
+    }
+
+    public static int getSizeInPixels() {
+        return SIZE_IN_PIXELS;
     }
 }
