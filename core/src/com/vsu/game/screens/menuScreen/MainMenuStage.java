@@ -74,13 +74,13 @@ public class MainMenuStage extends Stage {
         Table buttons = new Table();
         buttons.setFillParent(true);
         buttons.center().bottom();
-        buttons.debug();
 
         buttons.add(play);
         buttons.row().space(getWidth() / 200);
         buttons.add(settings);
         buttons.padBottom(getWidth() / 50f + Configuration.viewportBottom);
 
+        buttons.debug();
         addActor(buttons);
     }
 

@@ -40,7 +40,6 @@ public class MyGame extends Game {
         aspectRatio = (float) width / height;           //Вычисление соотношения экрана для правильного маштаба
 
         viewportHeight = SCREEN_WIDTH / aspectRatio;
-        System.out.println(viewportHeight);
         if (aspectRatio > 2) {
             viewportWidth = SCREEN_WIDTH;
             viewportLeft = 0;
