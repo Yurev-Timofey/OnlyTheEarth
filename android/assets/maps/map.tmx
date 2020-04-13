@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="36" height="11" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="26">
+<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="36" height="11" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="34">
  <tileset firstgid="1" source="Set.tsx"/>
  <layer id="1" name="Слой тайлов 1" width="36" height="11">
   <data encoding="base64" compression="zlib">
@@ -10,13 +10,15 @@
   <object id="1" x="0" y="320" width="1152" height="32"/>
   <object id="5" x="864" y="224" width="96" height="32"/>
   <object id="6" x="1056" y="224" width="96" height="32"/>
-  <object id="9" x="-32" y="0" width="32" height="352"/>
-  <object id="10" x="1152" y="0" width="32" height="352"/>
   <object id="13" x="480" y="288" width="512" height="32"/>
   <object id="14" x="1024" y="288" width="128" height="32"/>
   <object id="15" x="1024" y="256" width="128" height="32"/>
   <object id="16" x="832" y="256" width="160" height="32"/>
   <object id="19" x="160" y="192" width="160" height="32"/>
-  <object id="24" x="0" y="0" width="1152" height="32"/>
+ </objectgroup>
+ <objectgroup id="5" name="Слой объектов 2">
+  <object id="26" x="-32" y="0" width="32" height="352"/>
+  <object id="29" x="-32" y="-32" width="1216" height="32"/>
+  <object id="32" x="1152" y="0" width="32" height="352"/>
  </objectgroup>
 </map>
