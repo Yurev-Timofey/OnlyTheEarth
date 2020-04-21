@@ -1,20 +1,22 @@
 package com.neuron.game.gameLogic.states;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.neuron.game.gameLogic.objects.Hud;
+import com.neuron.game.gameLogic.objects.Person;
 import com.neuron.game.gameLogic.objects.Player;
 
 public abstract class State {
-    Player player;
-    String name;
-    float timer;
+    protected Person person;
+    protected states name;
+    protected float timer;
 
-    State(Player player, String name) {
-        this.player = player;
+    protected State(Person person, states name) {
+        this.person = person;
         this.name = name;
-        player.setAnimation(name);
+        person.setAnimation(name);
     }
 
-    public String getName() {
+    public states getType() {
         return name;
     }
 
@@ -25,7 +27,12 @@ public abstract class State {
     public void update(float delta) {
         timer += delta;
     }
+    public abstract void handleInput(InputEvent.Type typeOfEvent, Hud.buttons buttonName);
 
-    public abstract void handleInput(InputEvent.Type typeOfEvent, String buttonName);
+    public enum states{
+        JumpingState,
+        RunningState,
+        StandingState,
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.neuron.game.gameLogic.objects;
+package com.neuron.game.gameLogic.objects.guns;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,6 +10,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.neuron.game.gameLogic.objects.ObjectStatus;
+import com.neuron.game.gameLogic.objects.ObjectTypes;
 
 public class Bullet extends Actor {
     Vector2 position;
@@ -23,35 +25,36 @@ public class Bullet extends Actor {
         this.position = position;
         this.direction = direction;
 
-        createBodyDef(world);
+        createBody(world);
 
-        body.applyLinearImpulse(0.5f * direction, 0, body.getPosition().x, body.getPosition().y, true);
+        body.applyLinearImpulse(0.5f * direction, (float) (Math.random() * 0.06 - 0.03), body.getPosition().x, body.getPosition().y, true);
 
         stage.addActor(this);
     }
 
-    private void createBodyDef(World world) {
+    private void createBody(World world) {
         BodyDef def = new BodyDef();
         def.position.set(position);
         def.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(def);
-        body.setUserData("bullet");
+
         body.setBullet(true);
-        body.setGravityScale(0.01f);
+        body.setGravityScale(0.03f);
 
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(0.07f, 0.03f);
-        fixture = body.createFixture(shape, 10);
+        fixture = body.createFixture(shape, 9);
         fixture.setFriction(0);
         shape.dispose();
 
-        body.setUserData("bullet");
+        body.setUserData(ObjectTypes.BULLET);
+        fixture.setUserData(ObjectStatus.DEFAULT);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        if (body.getUserData().equals("dispose"))
+        if (fixture.getUserData().equals(ObjectStatus.TO_DISPOSE) || (body.getLinearVelocity().x < 3 && body.getLinearVelocity().x > -3))
             remove();
     }
 

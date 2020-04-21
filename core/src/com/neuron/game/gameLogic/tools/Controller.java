@@ -1,7 +1,8 @@
-package com.neuron.game.gameLogic.controllers;
+package com.neuron.game.gameLogic.tools;
 
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.neuron.game.gameLogic.objects.Hud;
 import com.neuron.game.gameLogic.objects.Player;
 
 public class Controller{
@@ -11,7 +12,7 @@ public class Controller{
         this.player = player;
     }
 
-    public void handleInput(InputEvent.Type typeOfEvent, String buttonName){
+    public void handleInput(InputEvent.Type typeOfEvent, Hud.buttons buttonName){
         player.getState().handleInput(typeOfEvent, buttonName);
     }
 }

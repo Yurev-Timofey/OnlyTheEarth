@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.neuron.game.Configuration;
-import com.neuron.game.gameLogic.controllers.Controller;
+import com.neuron.game.gameLogic.tools.Controller;
 
 public class Hud {
     private final FillViewport viewport;
@@ -19,6 +19,19 @@ public class Hud {
     private Table buttonsTable;
     Skin skin;
 
+    public enum buttons{
+        LEFT("Button_left"),
+        RIGHT("Button_right"),
+        UP("Button_up"),
+        FIRE("Button_fire");
+
+        private String name;
+        buttons(String name){
+            this.name = name;
+        }
+
+
+    }
 
     public Hud(TextureAtlas atlas, FillViewport viewport, final Controller controller) {
         this.viewport = viewport;
@@ -31,18 +44,18 @@ public class Hud {
         buttonsTable = new Table();
         buttonsTable.setFillParent(true);
 
-        buttonsTable.add(createButton("Button_left")).space(viewport.getWorldWidth() / 100);
-        buttonsTable.add(createButton("Button_right")).spaceRight(Configuration.viewportWidth - (buttonsTable.getMinWidth() + PAD) * 2);
-        buttonsTable.add(createButton("Button_up")).space(viewport.getWorldWidth() / 100);
-        buttonsTable.add(createButton("Button_fire"));
+        buttonsTable.add(createButton(buttons.LEFT)).space(viewport.getWorldWidth() / 100);
+        buttonsTable.add(createButton(buttons.RIGHT)).spaceRight(Configuration.viewportWidth - (buttonsTable.getMinWidth() + PAD) * 2);
+        buttonsTable.add(createButton(buttons.UP)).space(viewport.getWorldWidth() / 100);
+        buttonsTable.add(createButton(buttons.FIRE));
 
         buttonsTable.bottom().left();
         buttonsTable.padBottom(Configuration.viewportBottom + PAD);
         buttonsTable.padLeft(Configuration.viewportLeft + PAD);
     }
 
-    private Actor createButton(final String buttonName) {
-        Sprite sprite = skin.getSprite(buttonName);
+    private Actor createButton(final buttons buttonName) {
+        Sprite sprite = skin.getSprite(buttonName.name);
         sprite.setSize(viewport.getWorldWidth() / 10, viewport.getWorldHeight() / 5);
         ImageButton button = new ImageButton(new SpriteDrawable(sprite));
         button.addListener(new ClickListener() {
