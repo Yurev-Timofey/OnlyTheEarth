@@ -1,4 +1,4 @@
-package com.neuron.game.screens.gameScreen;
+package com.neuron.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -28,9 +28,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.neuron.game.Configuration;
 import com.neuron.game.MyGame;
-import com.neuron.game.gameLogic.controllers.Controller;
+import com.neuron.game.gameLogic.objects.enemy.Skeleton;
+import com.neuron.game.gameLogic.tools.Controller;
 import com.neuron.game.gameLogic.objects.Hud;
+import com.neuron.game.gameLogic.objects.ObjectTypes;
 import com.neuron.game.gameLogic.objects.Player;
+import com.neuron.game.gameLogic.tools.MyContactListener;
+
+import static com.neuron.game.Configuration.PIXELS_IN_METER;
 
 public class GameScreen implements Screen {
 
@@ -50,31 +55,25 @@ public class GameScreen implements Screen {
     private TiledMap map;
 
     private World world;
-    private final Player player;
+    private Player player;
 
 
-    public GameScreen(MyGame game) {
+    GameScreen(MyGame game) {
         this.game = game;
         loadAssets();
-
-        createWorld();
-        createContactListener();
-
-        player = new Player(world, assetManager.get("animations/character.atlas", TextureAtlas.class), new Vector2(1.5f, 2f));
 
         camera = new OrthographicCamera();
         viewport = new FillViewport(Configuration.SCREEN_WIDTH, Configuration.SCREEN_HEIGHT, camera);
         stage = new Stage(viewport);
-        stage.addActor(player);
-        stage.addActor(player.createGun(new TextureRegion(assetManager.get("images/AK-47.png", Texture.class))));
 
+        createWorld();
 
         mapRenderer = new OrthogonalTiledMapRenderer(map);
 
         //DEBUG
         debugCamera = new OrthographicCamera();
-        debugCamera.setToOrtho(false, Configuration.SCREEN_WIDTH / Configuration.PIXELS_IN_METER,
-                Configuration.SCREEN_HEIGHT / Configuration.PIXELS_IN_METER);
+        debugCamera.setToOrtho(false, Configuration.SCREEN_WIDTH / PIXELS_IN_METER,
+                Configuration.SCREEN_HEIGHT / PIXELS_IN_METER);
         debugRenderer = new Box2DDebugRenderer();
 
         controller = new Controller(player);
@@ -86,10 +85,10 @@ public class GameScreen implements Screen {
         assetManager = new AssetManager();
 
         assetManager.load("images/Control_buttons.atlas", TextureAtlas.class);
-        assetManager.load("images/character.png", Texture.class);
         assetManager.load("images/groundBlock.png", Texture.class);
         assetManager.load("animations/character.atlas", TextureAtlas.class);
         assetManager.load("images/AK-47.png", Texture.class);
+        assetManager.load("animations/skeleton.atlas", TextureAtlas.class);
 
         assetManager.finishLoading();
 
@@ -106,15 +105,15 @@ public class GameScreen implements Screen {
 
             BodyDef def = new BodyDef();
             def.type = BodyDef.BodyType.StaticBody;
-            def.position.set((rectangle.getX() + rectangle.getWidth() / 2) / Configuration.PIXELS_IN_METER, (rectangle.getY() + rectangle.getHeight() / 2) / Configuration.PIXELS_IN_METER);
+            def.position.set((rectangle.getX() + rectangle.getWidth() / 2) / PIXELS_IN_METER, (rectangle.getY() + rectangle.getHeight() / 2) / PIXELS_IN_METER);
 
             PolygonShape shape = new PolygonShape();
+            shape.setAsBox((rectangle.getWidth() / 2) / PIXELS_IN_METER, (rectangle.getHeight() / 2) / PIXELS_IN_METER);
 
-            shape.setAsBox((rectangle.getWidth() / 2) / Configuration.PIXELS_IN_METER, (rectangle.getHeight() / 2) / Configuration.PIXELS_IN_METER);
             Body body = world.createBody(def);
-
             body.createFixture(shape, 3);
-            body.setUserData("ground");
+
+            body.setUserData(ObjectTypes.GROUND);
         }
 
         //Создание невидимых стен
@@ -123,63 +122,31 @@ public class GameScreen implements Screen {
 
             BodyDef def = new BodyDef();
             def.type = BodyDef.BodyType.StaticBody;
-            def.position.set((rectangle.getX() + rectangle.getWidth() / 2) / Configuration.PIXELS_IN_METER, (rectangle.getY() + rectangle.getHeight() / 2) / Configuration.PIXELS_IN_METER);
+            def.position.set((rectangle.getX() + rectangle.getWidth() / 2) / PIXELS_IN_METER, (rectangle.getY() + rectangle.getHeight() / 2) / PIXELS_IN_METER);
 
             PolygonShape shape = new PolygonShape();
 
-            shape.setAsBox((rectangle.getWidth() / 2) / Configuration.PIXELS_IN_METER, (rectangle.getHeight() / 2) / Configuration.PIXELS_IN_METER);
+            shape.setAsBox((rectangle.getWidth() / 2) / PIXELS_IN_METER, (rectangle.getHeight() / 2) / PIXELS_IN_METER);
             Body body = world.createBody(def);
 
             body.createFixture(shape, 3);
-            body.setUserData("invisibleWall");
+            body.setUserData(ObjectTypes.WALL);
         }
-    }
 
-    private void createContactListener() {
-        world.setContactListener(new ContactListener() {
-            //Обнаружение контакта с землёй
-            private boolean areContactingWith(String nameOfObject, String firstObject, String secondObject) {
-                return (firstObject.equals(nameOfObject) ||
-                        secondObject.equals(nameOfObject));
-            }
+        player = new Player(world, assetManager.get("animations/character.atlas", TextureAtlas.class), new Vector2(1.5f, 2f));
+        stage.addActor(player);
+        stage.addActor(player.createGun(new TextureRegion(assetManager.get("images/AK-47.png", Texture.class))));
 
-            @Override
-            public void beginContact(Contact contact) {
-                String firstObject = (String) contact.getFixtureA().getBody().getUserData();
-                String secondObject = (String) contact.getFixtureB().getBody().getUserData();
-//                System.out.println(firstObject);
-//                System.out.println(secondObject);
-                if (areContactingWith("ground", firstObject, secondObject) &&
-                        areContactingWith("player", firstObject, secondObject)) {
-                    if (contact.getWorldManifold().getNormal().angle() == 90) {
-                        player.setGrounded(true);
-                    }
-                }
-
-                else if(areContactingWith("bullet", firstObject, secondObject) &&
-                        !(firstObject.equals(secondObject))){
-                    if (firstObject == "bullet"){
-                        contact.getFixtureA().getBody().setUserData("dispose");
-                    }
-                    else{
-                        contact.getFixtureB().getBody().setUserData("dispose");
-                    }
-                }
-            }
+        world.setContactListener(new MyContactListener(player));
 
 
-            @Override
-            public void endContact(Contact contact) {
-            }
-
-            @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {
-            }
-
-            @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {
-            }
-        });
+        /*Testing Enemy*/
+        for (MapObject object : map.getLayers().get(3).getObjects()) {
+            Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+            Skeleton skeleton = new Skeleton(world, assetManager.get("animations/skeleton.atlas", TextureAtlas.class), new Vector2(rectangle.getX() / PIXELS_IN_METER, (rectangle.getY() / PIXELS_IN_METER) + 0.1f));
+            stage.addActor(skeleton);
+            stage.addActor(skeleton.createGun(new TextureRegion(assetManager.get("images/AK-47.png", Texture.class))));
+        }
     }
 
     @Override
@@ -195,10 +162,9 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-        if ((player.getX() + (float) (Player.getSizeInPixels() / 2) - Configuration.viewportLeft >= Configuration.viewportWidth / 2) &&
-                player.isAlive()) {
+        if ((player.getX() + (float) (Player.getSizeInPixels() / 2) - Configuration.viewportLeft >= Configuration.viewportWidth / 2)) {
             camera.position.set(player.getX() + (float) (Player.getSizeInPixels() / 2), camera.position.y, 0);
-            debugCamera.position.set((player.getX() + (float) (Player.getSizeInPixels() / 2)) / Configuration.PIXELS_IN_METER, debugCamera.position.y, 0);
+            debugCamera.position.set((player.getX() + (float) (Player.getSizeInPixels() / 2)) / PIXELS_IN_METER, debugCamera.position.y, 0);
             hud.getButtonsTable().setPosition(player.getX() - Configuration.SCREEN_WIDTH / 2 + 60, hud.getButtonsTable().getY());
         }
 
@@ -238,9 +204,6 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         map.dispose();
-        mapRenderer.dispose();
-        debugRenderer.dispose();
-        player.detach();
         player.remove();
         world.dispose();
         assetManager.dispose();

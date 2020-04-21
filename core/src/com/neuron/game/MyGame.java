@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.neuron.game.screens.menuScreen.MenuScreen;
+import com.neuron.game.screens.MenuScreen;
 
 
 public class MyGame extends Game {
@@ -21,7 +21,7 @@ public class MyGame extends Game {
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
         param.size = (int) (Configuration.SCREEN_HEIGHT / 16.5); // Размер шрифта
         param.mono = true; //Отключение сглаживания шрифта
-        param.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>"; // Наши символы
+        param.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.:;,{}:\"´`'<>"; // Наши символы
         gameFont = generator.generateFont(param); // Генерируем шрифт
         gameFont.setColor(Color.WHITE); // Цвет белый
         param.size = Gdx.graphics.getWidth() / 28;
@@ -46,7 +46,7 @@ public class MyGame extends Game {
             Configuration.viewportTop = Configuration.viewportBottom + Configuration.viewportHeight;
         } else {
             Configuration.viewportWidth = Configuration.SCREEN_HEIGHT * Configuration.aspectRatio;
-            Configuration.viewportLeft = (Configuration.SCREEN_WIDTH - Configuration.viewportWidth) / 2;   //Левая и правая граница вьюпорта для привязки к краям экрана
+            Configuration.viewportLeft = (Configuration.SCREEN_WIDTH - Configuration.viewportWidth) / 2;
             Configuration.viewportRight = Configuration.viewportLeft + Configuration.viewportWidth;
             Configuration.viewportBottom = 0;
             Configuration.viewportTop = Configuration.viewportHeight;

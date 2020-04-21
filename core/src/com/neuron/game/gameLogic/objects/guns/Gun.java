@@ -7,18 +7,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.neuron.game.Configuration;
-import com.neuron.game.gameLogic.objects.Bullet;
-import com.neuron.game.gameLogic.objects.Player;
+import com.neuron.game.gameLogic.objects.Person;
 
 public abstract class Gun extends Actor {
-    Player player;
+    Person person;
     TextureRegion texture;
     Sound fireSound;
     World world;
     TextureRegion bulletTexture;
 
-    int ammo;
-    int damage;
+//    int ammo;
+//    int damage;
     float fireRate;
     int direction;
     float timeSinceLastShoot;
@@ -26,8 +25,8 @@ public abstract class Gun extends Actor {
 
     public Vector2 bulletStartPoint;
 
-    public Gun(World world, Player player, TextureRegion texture) {
-        this.player = player;
+    public Gun(World world, Person person, TextureRegion texture) {
+        this.person = person;
         this.texture = texture;
         this.world = world;
         setSize(texture.getRegionWidth(), texture.getRegionHeight());
@@ -54,19 +53,19 @@ public abstract class Gun extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
 
-        if (!player.isRunningRight() && !texture.isFlipX())
+        if (!person.isRunningRight() && !texture.isFlipX())
             texture.flip(true, false);
-        else if (player.isRunningRight() && texture.isFlipX())
+        else if (person.isRunningRight() && texture.isFlipX())
             texture.flip(true, false);
 
-        if (player.isRunningRight()) {
+        if (person.isRunningRight()) {
             direction = 1;
-            setPosition(player.getX() + player.getWidth() / 4, player.getY() + (int) (player.getHeight() / 5.5));
-            batch.draw(texture, player.getX() + player.getWidth() / 4, player.getY() + (int) (player.getHeight() / 5.5), getWidth(), getHeight());
+            setPosition(person.getX() + person.getWidth() / 4, person.getY() + (int) (person.getHeight() / 5.5));
+            batch.draw(texture, person.getX() + person.getWidth() / 4, person.getY() + (int) (person.getHeight() / 5.5), getWidth(), getHeight());
         } else {
             direction = -1;
-            setPosition(player.getX() + player.getWidth() / 8, player.getY() + (int) (player.getHeight() / 5.5));
-            batch.draw(texture, player.getX() + player.getWidth() / 8, player.getY() + (int) (player.getHeight() / 5.5), getWidth(), getHeight());
+            setPosition(person.getX() + person.getWidth() / 8, person.getY() + (int) (person.getHeight() / 5.5));
+            batch.draw(texture, person.getX() + person.getWidth() / 8, person.getY() + (int) (person.getHeight() / 5.5), getWidth(), getHeight());
         }
     }
 
