@@ -18,21 +18,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.neuron.game.Configuration;
 import com.neuron.game.MyGame;
-import com.neuron.game.gameLogic.objects.enemy.Skeleton;
+import com.neuron.game.gameLogic.objects.persons.enemy.Skeleton;
 import com.neuron.game.gameLogic.tools.Controller;
 import com.neuron.game.gameLogic.objects.Hud;
 import com.neuron.game.gameLogic.objects.ObjectTypes;
-import com.neuron.game.gameLogic.objects.Player;
+import com.neuron.game.gameLogic.objects.persons.Player;
 import com.neuron.game.gameLogic.tools.MyContactListener;
 
 import static com.neuron.game.Configuration.PIXELS_IN_METER;
@@ -56,6 +52,11 @@ public class GameScreen implements Screen {
 
     private World world;
     private Player player;
+
+
+    final public static short CATEGORY_PLAYER = 0x0001; // 0000000000000001 in binary
+    final public static short CATEGORY_ENEMY = 0x0002; // 0000000000000010 in binary
+    final public static short CATEGORY_GROUND = 0x0004; // 0000000000000100 in binary
 
 
     GameScreen(MyGame game) {
@@ -208,6 +209,5 @@ public class GameScreen implements Screen {
         world.dispose();
         assetManager.dispose();
         stage.dispose();
-        game.dispose();
     }
 }

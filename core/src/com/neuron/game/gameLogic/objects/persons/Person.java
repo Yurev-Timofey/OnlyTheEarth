@@ -1,17 +1,23 @@
-package com.neuron.game.gameLogic.objects;
+package com.neuron.game.gameLogic.objects.persons;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
+import com.neuron.game.gameLogic.objects.ObjectStatus;
+import com.neuron.game.gameLogic.objects.ObjectTypes;
 import com.neuron.game.gameLogic.objects.guns.AK_47;
 import com.neuron.game.gameLogic.objects.guns.Gun;
 import com.neuron.game.gameLogic.states.PlayerStates.StandingState;
@@ -37,10 +43,11 @@ public abstract class Person extends Actor {
     protected World world;
     protected Body body;
     protected Fixture fixture;
+    protected Fixture sensorFixture;
 
     State state;
 
-    private Gun gun;
+    protected Gun gun;
 
     static float SIZE_IN_METERS;
     static int SIZE_IN_PIXELS;
@@ -86,14 +93,21 @@ public abstract class Person extends Actor {
         def.fixedRotation = true;
         body = world.createBody(def);
 
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(SIZE_IN_METERS / 6, SIZE_IN_METERS / 3);
-        fixture = body.createFixture(shape, 13);
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.setAsBox(SIZE_IN_METERS / 6, SIZE_IN_METERS / 3);
+        fixture = body.createFixture(polygonShape, 13);
         fixture.setFriction(2);
-        shape.dispose();
+        polygonShape.dispose();
 
         body.setUserData(type);
         fixture.setUserData(ObjectStatus.DEFAULT);
+
+        CircleShape circleShape = new CircleShape();
+        circleShape.setRadius(1.5f);
+        sensorFixture = body.createFixture(circleShape, 0);
+        circleShape.dispose();
+        sensorFixture.setSensor(true);
+        sensorFixture.setUserData(ObjectStatus.DEFAULT);
     }
 
     public Gun createGun(TextureRegion texture) {
@@ -143,7 +157,6 @@ public abstract class Person extends Actor {
 
     @Override
     public void act(float delta) {
-        super.act(delta);
         if (fixture.getUserData().equals(ObjectStatus.DAMAGED)) {
             hp -= 10;
             fixture.setUserData(ObjectStatus.DEFAULT);
@@ -162,6 +175,8 @@ public abstract class Person extends Actor {
             isRunningRight = true;
 
         textureRegion = getFrame();
+
+        super.act(delta);
     }
 
     @Override
@@ -179,22 +194,9 @@ public abstract class Person extends Actor {
 
     @Override
     public boolean remove() {
-        body.destroyFixture(fixture);
         world.destroyBody(body);
-        System.out.println(gun.remove());
+        gun.remove();
         return super.remove();
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public float getVelocity() {
-        return velocity;
     }
 
     public Body getBody() {

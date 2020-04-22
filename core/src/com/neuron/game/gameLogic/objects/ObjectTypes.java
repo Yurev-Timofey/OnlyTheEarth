@@ -5,5 +5,5 @@ public enum ObjectTypes {
     PLAYER,
     GROUND,
     WALL,
-    ENEMY;
+    ENEMY
 }

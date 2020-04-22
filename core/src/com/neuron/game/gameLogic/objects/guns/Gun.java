@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.neuron.game.Configuration;
-import com.neuron.game.gameLogic.objects.Person;
+import com.neuron.game.gameLogic.objects.persons.Person;
 
 public abstract class Gun extends Actor {
     Person person;
@@ -15,6 +15,7 @@ public abstract class Gun extends Actor {
     Sound fireSound;
     World world;
     TextureRegion bulletTexture;
+    boolean firing = false;
 
 //    int ammo;
 //    int damage;
@@ -41,13 +42,16 @@ public abstract class Gun extends Actor {
 
     @Override
     public void act(float delta) {
-        super.act(delta);
-
         timeSinceLastShoot += delta;
         if (direction == -1)
             bulletStartPoint = new Vector2(getX() / Configuration.PIXELS_IN_METER, (getY() + getHeight() / 2) / Configuration.PIXELS_IN_METER);
         else
             bulletStartPoint = new Vector2((getX() + getWidth()) / Configuration.PIXELS_IN_METER, (getY() + getHeight() / 2) / Configuration.PIXELS_IN_METER);
+
+        if (firing)
+            fire();
+
+        super.act(delta);
     }
 
     @Override
@@ -68,5 +72,7 @@ public abstract class Gun extends Actor {
             batch.draw(texture, person.getX() + person.getWidth() / 8, person.getY() + (int) (person.getHeight() / 5.5), getWidth(), getHeight());
         }
     }
-
+    public void setFiring(boolean firing) {
+        this.firing = firing;
+    }
 }

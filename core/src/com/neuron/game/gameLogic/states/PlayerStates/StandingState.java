@@ -2,7 +2,7 @@ package com.neuron.game.gameLogic.states.PlayerStates;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.neuron.game.gameLogic.objects.Hud;
-import com.neuron.game.gameLogic.objects.Person;
+import com.neuron.game.gameLogic.objects.persons.Person;
 import com.neuron.game.gameLogic.states.State;
 
 public class StandingState extends State {
@@ -28,14 +28,14 @@ public class StandingState extends State {
                     person.setState(new JumpingState(person, typeOfEvent, buttonName));
                     break;
                 case FIRE:
-                    person.getGun().fire();
+                    person.getGun().setFiring(true);
                     break;
             }
         }
         if (typeOfEvent.equals(InputEvent.Type.touchUp)) {
             switch (buttonName) {
                 case FIRE:
-//                    person.stopFiring();
+                    person.getGun().setFiring(false);
                     break;
                 case UP:
                     break;
