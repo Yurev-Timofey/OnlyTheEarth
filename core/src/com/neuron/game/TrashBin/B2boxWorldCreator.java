@@ -14,7 +14,7 @@
 //import com.badlogic.gdx.physics.box2d.PolygonShape;
 //import com.badlogic.gdx.physics.box2d.World;
 //import com.neuron.game.Configuration;
-//import com.neuron.game.gameLogic.objects.Player;
+//import com.neuron.game.gameLogic.objects.persons.Player;
 //
 //public class B2boxWorldCreator {
 //    public B2boxWorldCreator(World world, TiledMap map) {

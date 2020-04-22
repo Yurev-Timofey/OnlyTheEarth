@@ -1,4 +1,4 @@
-package com.neuron.game.gameLogic.objects.enemy;
+package com.neuron.game.gameLogic.objects.persons.enemy;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;

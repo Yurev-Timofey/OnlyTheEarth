@@ -3,7 +3,7 @@ package com.neuron.game.gameLogic.tools;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.neuron.game.gameLogic.objects.Hud;
-import com.neuron.game.gameLogic.objects.Player;
+import com.neuron.game.gameLogic.objects.persons.Player;
 
 public class Controller{
     private Player player;

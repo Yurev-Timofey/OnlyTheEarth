@@ -2,8 +2,7 @@ package com.neuron.game.gameLogic.states;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.neuron.game.gameLogic.objects.Hud;
-import com.neuron.game.gameLogic.objects.Person;
-import com.neuron.game.gameLogic.objects.Player;
+import com.neuron.game.gameLogic.objects.persons.Person;
 
 public abstract class State {
     protected Person person;
