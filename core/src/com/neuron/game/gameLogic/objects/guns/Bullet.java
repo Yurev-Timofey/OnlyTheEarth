@@ -10,8 +10,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.neuron.game.gameLogic.objects.ObjectStatus;
-import com.neuron.game.gameLogic.objects.ObjectTypes;
+import com.neuron.game.gameLogic.objects.userData.ObjectStatus;
+import com.neuron.game.gameLogic.objects.userData.ObjectType;
+import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
+import com.neuron.game.gameLogic.objects.userData.UserData;
 
 public class Bullet extends Actor {
     Vector2 position;
@@ -40,6 +42,7 @@ public class Bullet extends Actor {
 
         body.setBullet(true);
         body.setGravityScale(0.03f);
+        body.setFixedRotation(true);
 
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(0.07f, 0.03f);
@@ -47,14 +50,13 @@ public class Bullet extends Actor {
         fixture.setFriction(0);
         shape.dispose();
 
-        body.setUserData(ObjectTypes.BULLET);
-        fixture.setUserData(ObjectStatus.DEFAULT);
+        body.setUserData(new UserData(ObjectType.BULLET, ObjectStatus.DEFAULT, SeeEnemy.DONT_SEE_ENEMY, false));
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        if (fixture.getUserData().equals(ObjectStatus.TO_DISPOSE) || (body.getLinearVelocity().x < 3 && body.getLinearVelocity().x > -3))
+        if (((UserData)body.getUserData()).getStatus().equals(ObjectStatus.TO_DISPOSE) || (body.getLinearVelocity().x < 3 && body.getLinearVelocity().x > -3))
             remove();
     }
 

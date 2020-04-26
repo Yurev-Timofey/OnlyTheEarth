@@ -37,7 +37,7 @@ public class RunningState extends State {
         else if (typeOfEvent.equals(InputEvent.Type.touchUp)) {
             switch (buttonName) {
                 case FIRE:
-//                    person.getGun().setFiring(false);
+                    person.getGun().setFiring(false);
                     break;
                 case UP:
                     break;

@@ -25,10 +25,14 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.neuron.game.Configuration;
 import com.neuron.game.MyGame;
 import com.neuron.game.gameLogic.objects.persons.enemy.Skeleton;
+import com.neuron.game.gameLogic.objects.userData.ObjectStatus;
+import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
+import com.neuron.game.gameLogic.objects.userData.UserData;
 import com.neuron.game.gameLogic.tools.Controller;
 import com.neuron.game.gameLogic.objects.Hud;
-import com.neuron.game.gameLogic.objects.ObjectTypes;
+import com.neuron.game.gameLogic.objects.userData.ObjectType;
 import com.neuron.game.gameLogic.objects.persons.Player;
+import com.neuron.game.gameLogic.tools.MyContactFilter;
 import com.neuron.game.gameLogic.tools.MyContactListener;
 
 import static com.neuron.game.Configuration.PIXELS_IN_METER;
@@ -114,7 +118,7 @@ public class GameScreen implements Screen {
             Body body = world.createBody(def);
             body.createFixture(shape, 3);
 
-            body.setUserData(ObjectTypes.GROUND);
+            body.setUserData(new UserData(ObjectType.GROUND, ObjectStatus.DEFAULT, SeeEnemy.DONT_SEE_ENEMY, false));
         }
 
         //Создание невидимых стен
@@ -131,15 +135,15 @@ public class GameScreen implements Screen {
             Body body = world.createBody(def);
 
             body.createFixture(shape, 3);
-            body.setUserData(ObjectTypes.WALL);
+            body.setUserData(new UserData(ObjectType.WALL, ObjectStatus.DEFAULT, SeeEnemy.DONT_SEE_ENEMY, false));
         }
 
         player = new Player(world, assetManager.get("animations/character.atlas", TextureAtlas.class), new Vector2(1.5f, 2f));
         stage.addActor(player);
         stage.addActor(player.createGun(new TextureRegion(assetManager.get("images/AK-47.png", Texture.class))));
 
-        world.setContactListener(new MyContactListener(player));
-
+        world.setContactListener(new MyContactListener());
+        world.setContactFilter(new MyContactFilter());
 
         /*Testing Enemy*/
         for (MapObject object : map.getLayers().get(3).getObjects()) {

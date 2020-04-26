@@ -3,70 +3,110 @@ package com.neuron.game.gameLogic.tools;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.neuron.game.gameLogic.objects.ObjectStatus;
-import com.neuron.game.gameLogic.objects.ObjectTypes;
-import com.neuron.game.gameLogic.objects.persons.Player;
+import com.neuron.game.gameLogic.objects.userData.ObjectStatus;
+import com.neuron.game.gameLogic.objects.userData.ObjectType;
+import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
+import com.neuron.game.gameLogic.objects.userData.SensorUserData;
+import com.neuron.game.gameLogic.objects.userData.UserData;
+
 
 public class MyContactListener implements ContactListener {
-    Player player;
 
-    public MyContactListener(Player player) {
-        this.player = player;
-    }
-
-    private boolean areContactingWith(ObjectTypes nameOfObject, ObjectTypes firstObject, ObjectTypes secondObject) {
+    private boolean areContactingWith(ObjectType nameOfObject, ObjectType firstObject, ObjectType secondObject) {
         return (firstObject.equals(nameOfObject) ||
                 secondObject.equals(nameOfObject));
     }
 
+    private UserData findAndDeclare(UserData firstObject, UserData secondObject, ObjectType[] required) {
+        for (ObjectType type : required) {
+            if (firstObject.getObjType().equals(type)) {
+                return firstObject;
+            }
+
+            if (secondObject.getObjType().equals(type)) {
+                return secondObject;
+            }
+        }
+        return null;
+    }
+
+    private void leftOrRight(Fixture fixtureA, Fixture fixtureB, boolean far) {
+        SeeEnemy left;
+        SeeEnemy right;
+
+        if (!far) {
+            left = SeeEnemy.SEE_ENEMY_LEFT;
+            right = SeeEnemy.SEE_ENEMY_RIGHT;
+        } else {
+            left = SeeEnemy.SEE_ENEMY_FAR_LEFT;
+            right = SeeEnemy.SEE_ENEMY_FAR_RIGHT;
+        }
+
+        if (((UserData) fixtureA.getBody().getUserData()).getObjType().equals(ObjectType.PLAYER)) {
+            if (fixtureA.getBody().getPosition().x < fixtureB.getBody().getPosition().x) {
+                ((UserData) fixtureB.getBody().getUserData()).setSeeEnemy(left);
+                ((UserData) fixtureA.getBody().getUserData()).setSeeEnemy(right);
+            } else {
+                ((UserData) fixtureB.getBody().getUserData()).setSeeEnemy(right);
+                ((UserData) fixtureA.getBody().getUserData()).setSeeEnemy(left);
+            }
+        } else {
+            if (fixtureA.getBody().getPosition().x > fixtureB.getBody().getPosition().x) {
+                ((UserData) fixtureB.getBody().getUserData()).setSeeEnemy(left);
+                ((UserData) fixtureA.getBody().getUserData()).setSeeEnemy(right);
+            } else {
+                ((UserData) fixtureB.getBody().getUserData()).setSeeEnemy(right);
+                ((UserData) fixtureA.getBody().getUserData()).setSeeEnemy(left);
+            }
+        }
+    }
+
     @Override
     public void beginContact(Contact contact) {
-        ObjectTypes firstObject = (ObjectTypes) contact.getFixtureA().getBody().getUserData();
-        ObjectTypes secondObject = (ObjectTypes) contact.getFixtureB().getBody().getUserData();
-        float angleOfContact = contact.getWorldManifold().getNormal().angle();
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
 
-        if (!contact.getFixtureA().isSensor() && !contact.getFixtureB().isSensor()) {    //Проверка, не являются фикстуры сенсорами
-            if (areContactingWith(ObjectTypes.GROUND, firstObject, secondObject) &&      //Обнаружение контакта с землёй
-                    areContactingWith(ObjectTypes.PLAYER, firstObject, secondObject)) {
-                switch ((short) angleOfContact) {
+        if (!fixtureA.isSensor() && !fixtureB.isSensor()) {
+            UserData person = findAndDeclare((UserData) fixtureA.getBody().getUserData(),
+                    (UserData) fixtureB.getBody().getUserData(),
+                    new ObjectType[]{ObjectType.PLAYER, ObjectType.ENEMY});
+
+            UserData ground = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
+                    ((UserData) fixtureB.getBody().getUserData()),
+                    new ObjectType[]{ObjectType.GROUND});
+
+            UserData bullet = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
+                    ((UserData) fixtureB.getBody().getUserData()),
+                    new ObjectType[]{ObjectType.BULLET});
+
+
+            if ((person != null) && (ground != null)) {
+                switch ((short) contact.getWorldManifold().getNormal().angle()) {
                     case 90:
-                        player.setGrounded(true);
+                        person.setGrounded(true);
                         break;
                     case 180:
                     case 0:
-                        player.climbToBlock();
+                        person.setStatus(ObjectStatus.CLIMB_TO_BLOCK);
                         break;
                 }
-            } else if (areContactingWith(ObjectTypes.BULLET, firstObject, secondObject) && !(firstObject.equals(secondObject))) {
-                if (firstObject.equals(ObjectTypes.BULLET)) {
-                    if (secondObject.equals(ObjectTypes.PLAYER) || secondObject.equals(ObjectTypes.ENEMY))
-                        contact.getFixtureB().setUserData(ObjectStatus.DAMAGED);
-
-                    contact.getFixtureA().setUserData(ObjectStatus.TO_DISPOSE);
-                } else {
-                    if (firstObject.equals(ObjectTypes.PLAYER) || firstObject.equals(ObjectTypes.ENEMY))
-                        contact.getFixtureA().setUserData(ObjectStatus.DAMAGED);
-                    contact.getFixtureB().setUserData(ObjectStatus.TO_DISPOSE);
-                }
             }
-        } else if (contact.getFixtureA().isSensor() && contact.getFixtureB().isSensor() && areContactingWith(ObjectTypes.PLAYER, firstObject, secondObject)) {
-            if (firstObject.equals(ObjectTypes.PLAYER)) {
-                if (contact.getFixtureA().getBody().getPosition().x < contact.getFixtureB().getBody().getPosition().x) {
-                    contact.getFixtureB().setUserData(ObjectStatus.SEE_ENEMY_LEFT);
-                    contact.getFixtureA().setUserData(ObjectStatus.SEE_ENEMY_RIGHT);
-                } else {
-                    contact.getFixtureB().setUserData(ObjectStatus.SEE_ENEMY_RIGHT);
-                    contact.getFixtureA().setUserData(ObjectStatus.SEE_ENEMY_LEFT);
-                }
-            } else {
-                if (contact.getFixtureA().getBody().getPosition().x > contact.getFixtureB().getBody().getPosition().x) {
-                    contact.getFixtureB().setUserData(ObjectStatus.SEE_ENEMY_LEFT);
-                    contact.getFixtureA().setUserData(ObjectStatus.SEE_ENEMY_RIGHT);
-                } else {
-                    contact.getFixtureB().setUserData(ObjectStatus.SEE_ENEMY_RIGHT);
-                    contact.getFixtureA().setUserData(ObjectStatus.SEE_ENEMY_LEFT);
-                }
+
+            if ((person != null) && (bullet != null)) {
+                person.setStatus(ObjectStatus.DAMAGED);
+                bullet.setStatus(ObjectStatus.TO_DISPOSE);
+            }
+        } else if (fixtureA.isSensor() && fixtureB.isSensor()) {
+            if (areContactingWith(ObjectType.PLAYER, ((UserData) fixtureA.getBody().getUserData()).getObjType(),
+                    ((UserData) fixtureB.getBody().getUserData()).getObjType())) {
+                if (((SensorUserData) fixtureA.getUserData()).getSensorType().equals(SensorUserData.SensorType.NearSensor) &&
+                        ((SensorUserData) fixtureB.getUserData()).getSensorType().equals(SensorUserData.SensorType.NearSensor))
+                    leftOrRight(fixtureA, fixtureB, false);
+                else if (((SensorUserData) fixtureA.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor) &&
+                        ((SensorUserData) fixtureB.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor))
+                    leftOrRight(fixtureA, fixtureB, true);
             }
         }
     }
@@ -74,12 +114,19 @@ public class MyContactListener implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {
-        ObjectTypes firstObject = (ObjectTypes) contact.getFixtureA().getBody().getUserData();
-        ObjectTypes secondObject = (ObjectTypes) contact.getFixtureB().getBody().getUserData();
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
 
-        if (contact.getFixtureA().isSensor() && contact.getFixtureB().isSensor() && areContactingWith(ObjectTypes.PLAYER, firstObject, secondObject)) {
-            contact.getFixtureA().setUserData(ObjectStatus.DEFAULT);
-            contact.getFixtureB().setUserData(ObjectStatus.DEFAULT);
+        if (contact.getFixtureA().isSensor() && contact.getFixtureB().isSensor() && areContactingWith(ObjectType.PLAYER,
+                ((UserData) fixtureA.getBody().getUserData()).getObjType(),
+                ((UserData) fixtureB.getBody().getUserData()).getObjType())) {
+            if (((SensorUserData) fixtureA.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor) &&
+                    ((SensorUserData) fixtureB.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor)) {
+                ((UserData) contact.getFixtureA().getBody().getUserData()).setSeeEnemy(SeeEnemy.DONT_SEE_ENEMY);
+                ((UserData) contact.getFixtureB().getBody().getUserData()).setSeeEnemy(SeeEnemy.DONT_SEE_ENEMY);
+            } else {
+                leftOrRight(fixtureA, fixtureB, true);
+            }
         }
     }
 
