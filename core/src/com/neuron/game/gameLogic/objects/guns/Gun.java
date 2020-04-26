@@ -17,7 +17,7 @@ public abstract class Gun extends Actor {
     TextureRegion bulletTexture;
     boolean firing = false;
 
-//    int ammo;
+    //    int ammo;
 //    int damage;
     float fireRate;
     int direction;
@@ -43,6 +43,7 @@ public abstract class Gun extends Actor {
     @Override
     public void act(float delta) {
         timeSinceLastShoot += delta;
+
         if (direction == -1)
             bulletStartPoint = new Vector2(getX() / Configuration.PIXELS_IN_METER, (getY() + getHeight() / 2) / Configuration.PIXELS_IN_METER);
         else
@@ -72,6 +73,7 @@ public abstract class Gun extends Actor {
             batch.draw(texture, person.getX() + person.getWidth() / 8, person.getY() + (int) (person.getHeight() / 5.5), getWidth(), getHeight());
         }
     }
+
     public void setFiring(boolean firing) {
         this.firing = firing;
     }

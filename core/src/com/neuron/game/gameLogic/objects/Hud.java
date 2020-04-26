@@ -28,7 +28,7 @@ public class Hud {
         private String name;
         buttons(String name){
             this.name = name;
-        }
+        } // TODO: 25.04.2020  Перейти на чистный Enum
 
 
     }

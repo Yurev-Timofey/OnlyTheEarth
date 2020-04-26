@@ -4,22 +4,22 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
-import com.neuron.game.gameLogic.objects.ObjectStatus;
-import com.neuron.game.gameLogic.objects.ObjectTypes;
+import com.neuron.game.gameLogic.objects.userData.ObjectStatus;
+import com.neuron.game.gameLogic.objects.userData.ObjectType;
 import com.neuron.game.gameLogic.objects.guns.AK_47;
 import com.neuron.game.gameLogic.objects.guns.Gun;
+import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
+import com.neuron.game.gameLogic.objects.userData.SensorUserData;
+import com.neuron.game.gameLogic.objects.userData.UserData;
 import com.neuron.game.gameLogic.states.PlayerStates.StandingState;
 import com.neuron.game.gameLogic.states.State;
 
@@ -38,12 +38,16 @@ public abstract class Person extends Actor {
     protected boolean alive = true;
     protected boolean isRunningRight = true;
     protected boolean isGrounded;
+
+    protected final float maxVelocity;
     protected float velocity;
 
     protected World world;
     protected Body body;
     protected Fixture fixture;
-    protected Fixture sensorFixture;
+    protected Fixture NearSensorFixture;
+    protected Fixture FarSensorFixture;
+    protected Fixture groundedFixture;
 
     State state;
 
@@ -52,8 +56,9 @@ public abstract class Person extends Actor {
     static float SIZE_IN_METERS;
     static int SIZE_IN_PIXELS;
 
-    protected Person(World world, int maxHp, TextureAtlas atlas, Vector2 position, float sizeInMeters, ObjectTypes type) {
+    protected Person(World world, int maxHp, float maxVelocity, TextureAtlas atlas, Vector2 position, float sizeInMeters, ObjectType type) {
         this.maxHp = maxHp;
+        this.maxVelocity = maxVelocity;
         hp = maxHp;
         this.world = world;
         SIZE_IN_METERS = sizeInMeters;
@@ -86,7 +91,7 @@ public abstract class Person extends Actor {
         frames.clear();
     }
 
-    private void definePersonBody(Vector2 position, ObjectTypes type) {
+    private void definePersonBody(Vector2 position, ObjectType type) {
         BodyDef def = new BodyDef();
         def.position.set(position);
         def.type = BodyDef.BodyType.DynamicBody;
@@ -99,15 +104,19 @@ public abstract class Person extends Actor {
         fixture.setFriction(2);
         polygonShape.dispose();
 
-        body.setUserData(type);
-        fixture.setUserData(ObjectStatus.DEFAULT);
-
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(1.5f);
-        sensorFixture = body.createFixture(circleShape, 0);
+        circleShape.setRadius(1.6f);
+        NearSensorFixture = body.createFixture(circleShape, 0);
+        circleShape.setRadius(2.6f);
+        FarSensorFixture = body.createFixture(circleShape, 0);
         circleShape.dispose();
-        sensorFixture.setSensor(true);
-        sensorFixture.setUserData(ObjectStatus.DEFAULT);
+
+        NearSensorFixture.setSensor(true);
+        FarSensorFixture.setSensor(true);
+        NearSensorFixture.setUserData(new SensorUserData(SensorUserData.SensorType.NearSensor, type));
+        FarSensorFixture.setUserData(new SensorUserData(SensorUserData.SensorType.FarSensor, type));
+
+        body.setUserData(new UserData(type, ObjectStatus.DEFAULT, SeeEnemy.DONT_SEE_ENEMY, true));
     }
 
     public Gun createGun(TextureRegion texture) {
@@ -116,12 +125,13 @@ public abstract class Person extends Actor {
     }
 
     public void move(int direction) {
-        velocity = 3.5f * direction;
+        velocity = maxVelocity * direction;
         fixture.setFriction(0);
     }
 
     public void climbToBlock() {
-        body.applyLinearImpulse(0, 9.5f, body.getPosition().x, body.getPosition().y, true); //TODO
+        ((UserData) body.getUserData()).setGrounded(false);
+        body.applyLinearImpulse(0, 10, body.getPosition().x, body.getPosition().y, true); //TODO
     }
 
     public void resetVelocity() {
@@ -132,7 +142,7 @@ public abstract class Person extends Actor {
 
     public void jump() {
         if (isGrounded) {
-            isGrounded = false;
+            ((UserData) body.getUserData()).setGrounded(false);
             body.applyLinearImpulse(0, 20, body.getPosition().x, body.getPosition().y, true);
         }
     }
@@ -157,17 +167,11 @@ public abstract class Person extends Actor {
 
     @Override
     public void act(float delta) {
-        if (fixture.getUserData().equals(ObjectStatus.DAMAGED)) {
-            hp -= 10;
-            fixture.setUserData(ObjectStatus.DEFAULT);
-            if (hp <= 0)
-                remove();
-        }
-
         if ((body.getLinearVelocity().x < velocity && velocity > 0) || (body.getLinearVelocity().x > velocity && velocity < 0))
             body.applyLinearImpulse(velocity, 0, body.getPosition().x, body.getPosition().y, true);
 
         state.update(delta);
+        userDataChecker((UserData) body.getUserData());
 
         if (velocity < 0)
             isRunningRight = false;
@@ -176,7 +180,25 @@ public abstract class Person extends Actor {
 
         textureRegion = getFrame();
 
+        System.out.println(state.toString());
+
         super.act(delta);
+    }
+
+    private void userDataChecker(UserData data) {
+        switch (data.getStatus()) {
+            case DAMAGED:
+                hp -= 10;
+                data.setStatus(ObjectStatus.DEFAULT);
+                if (hp <= 0)
+                    remove();
+                break;
+            case CLIMB_TO_BLOCK:
+                climbToBlock();
+                data.setStatus(ObjectStatus.DEFAULT);
+                break;
+        }
+        isGrounded = data.isGrounded();
     }
 
     @Override
