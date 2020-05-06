@@ -29,7 +29,6 @@
   <object id="2" x="2400" y="0" width="16" height="240"/>
  </objectgroup>
  <objectgroup id="4" name="Слой объектов 3">
-  <object id="25" x="480" y="160" width="16" height="16"/>
   <object id="26" x="672" y="128" width="16" height="16"/>
   <object id="27" x="880" y="160" width="16" height="16"/>
   <object id="28" x="1072" y="176" width="16" height="16"/>

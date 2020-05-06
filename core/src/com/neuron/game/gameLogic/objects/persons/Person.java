@@ -47,7 +47,6 @@ public abstract class Person extends Actor {
     protected Fixture fixture;
     protected Fixture NearSensorFixture;
     protected Fixture FarSensorFixture;
-    protected Fixture groundedFixture;
 
     State state;
 
@@ -119,8 +118,9 @@ public abstract class Person extends Actor {
         body.setUserData(new UserData(type, ObjectStatus.DEFAULT, SeeEnemy.DONT_SEE_ENEMY, true));
     }
 
-    public Gun createGun(TextureRegion texture) {
-        gun = new AK_47(world, this, texture);
+
+    public Gun createGun(TextureRegion texture, TextureRegion bulletTexture) {
+        gun = new AK_47(world, this, texture, bulletTexture);
         return gun;
     }
 
@@ -130,7 +130,7 @@ public abstract class Person extends Actor {
     }
 
     public void climbToBlock() {
-        ((UserData) body.getUserData()).setGrounded(false);
+        setGrounded(false);
         body.applyLinearImpulse(0, 10, body.getPosition().x, body.getPosition().y, true); //TODO
     }
 
@@ -180,25 +180,34 @@ public abstract class Person extends Actor {
 
         textureRegion = getFrame();
 
-        System.out.println(state.toString());
-
         super.act(delta);
     }
 
     private void userDataChecker(UserData data) {
+        isGrounded = (data.isGrounded() && body.getLinearVelocity().y < 1 && body.getLinearVelocity().y > -1);
         switch (data.getStatus()) {
             case DAMAGED:
-                hp -= 10;
+                hp -= 5;
                 data.setStatus(ObjectStatus.DEFAULT);
                 if (hp <= 0)
                     remove();
                 break;
             case CLIMB_TO_BLOCK:
-                climbToBlock();
+                if (isGrounded) {
+                    climbToBlock();
+                    data.setStatus(ObjectStatus.DEFAULT);
+                }
+                break;
+            case HEALED:
+                if (hp + 20 <= maxHp)
+                    hp += 20;
+                else
+                    hp = maxHp;
                 data.setStatus(ObjectStatus.DEFAULT);
                 break;
         }
-        isGrounded = data.isGrounded();
+        if (state.getType().equals(State.states.JumpingState))
+            data.setStatus(ObjectStatus.DEFAULT);
     }
 
     @Override
@@ -216,6 +225,7 @@ public abstract class Person extends Actor {
 
     @Override
     public boolean remove() {
+        alive = false;
         world.destroyBody(body);
         gun.remove();
         return super.remove();
@@ -245,11 +255,20 @@ public abstract class Person extends Actor {
         return isRunningRight;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
     public boolean isGrounded() {
         return isGrounded;
     }
 
     public void setGrounded(boolean grounded) {
         isGrounded = grounded;
+        ((UserData) body.getUserData()).setGrounded(false);
     }
 }

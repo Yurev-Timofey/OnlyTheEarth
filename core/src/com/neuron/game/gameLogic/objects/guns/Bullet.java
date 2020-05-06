@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.neuron.game.Configuration;
 import com.neuron.game.gameLogic.objects.userData.ObjectStatus;
 import com.neuron.game.gameLogic.objects.userData.ObjectType;
 import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
@@ -23,13 +24,17 @@ public class Bullet extends Actor {
     Body body;
     Fixture fixture;
 
-    public Bullet(World world, Vector2 position, int direction, Stage stage) {
+    public Bullet(World world, Vector2 position, int direction, Stage stage, TextureRegion texture) { //TODO Добавить наследование от MyActor
         this.position = position;
         this.direction = direction;
+        this.texture = texture;
 
         createBody(world);
 
         body.applyLinearImpulse(0.5f * direction, (float) (Math.random() * 0.06 - 0.03), body.getPosition().x, body.getPosition().y, true);
+
+        setWidth(texture.getRegionWidth());
+        setHeight(texture.getRegionHeight());
 
         stage.addActor(this);
     }
@@ -56,7 +61,7 @@ public class Bullet extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        if (((UserData)body.getUserData()).getStatus().equals(ObjectStatus.TO_DISPOSE) || (body.getLinearVelocity().x < 3 && body.getLinearVelocity().x > -3))
+        if (((UserData) body.getUserData()).getStatus().equals(ObjectStatus.TO_DISPOSE) || (body.getLinearVelocity().x < 3 && body.getLinearVelocity().x > -3))
             remove();
     }
 
@@ -69,6 +74,6 @@ public class Bullet extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-//        batch.draw(texture, body.getPosition().x * Configuration.PIXELS_IN_METER, body.getPosition().y * Configuration.PIXELS_IN_METER, getWidth(), getHeight());
+        batch.draw(texture, (body.getPosition().x - 0.035f) * Configuration.PIXELS_IN_METER, (body.getPosition().y - 0.015f) * Configuration.PIXELS_IN_METER, getWidth(), getHeight());
     }
 }

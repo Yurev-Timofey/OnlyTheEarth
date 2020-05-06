@@ -3,6 +3,7 @@ package com.neuron.game.gameLogic.states.PlayerStates;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.neuron.game.gameLogic.objects.Hud;
 import com.neuron.game.gameLogic.objects.persons.Person;
+import com.neuron.game.gameLogic.objects.userData.UserData;
 import com.neuron.game.gameLogic.states.State;
 
 public class JumpingState extends State {
@@ -48,7 +49,8 @@ public class JumpingState extends State {
     @Override
     public void update(float delta) {
         super.update(delta);
-        if (person.isGrounded()) {
+//        if (person.isGrounded()) {
+        if (((UserData)person.getBody().getUserData()).isGrounded()) {
             if (person.getBody().getLinearVelocity().x != 0)
                 person.setState(new RunningState(person));
             else

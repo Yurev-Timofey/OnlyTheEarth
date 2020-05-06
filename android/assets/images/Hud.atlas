@@ -1,0 +1,76 @@
+
+Hud.png
+size: 114,114
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Button_fire
+  rotate: false
+  xy: 2, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_fire_pressed
+  rotate: false
+  xy: 36, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_left
+  rotate: false
+  xy: 36, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_left_pressed
+  rotate: false
+  xy: 70, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_right
+  rotate: false
+  xy: 70, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_right_pressed
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_up
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Button_up_pressed
+  rotate: false
+  xy: 2, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+hpBar
+  rotate: false
+  xy: 62, 104
+  size: 44, 8
+  orig: 44, 8
+  offset: 0, 0
+  index: -1
+hpFrame
+  rotate: false
+  xy: 2, 104
+  size: 58, 8
+  orig: 58, 8
+  offset: 0, 0
+  index: -1

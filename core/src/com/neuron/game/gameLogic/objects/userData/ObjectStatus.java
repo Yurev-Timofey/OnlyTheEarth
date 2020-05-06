@@ -4,5 +4,6 @@ public enum ObjectStatus {
     DEFAULT,
     TO_DISPOSE,
     CLIMB_TO_BLOCK,
-    DAMAGED
+    DAMAGED,
+    HEALED
 }

@@ -6,7 +6,7 @@ public class UserData {
     private SeeEnemy seeEnemy;
     private boolean grounded;
 
-    public UserData(ObjectType objType, ObjectStatus status, SeeEnemy seeEnemy, boolean grounded) {
+    public UserData(ObjectType objType, ObjectStatus status, SeeEnemy seeEnemy, boolean grounded) { //TODO Добавить уровень абстракции
         this.objType = objType;
         this.status = status;
         this.seeEnemy = seeEnemy;
