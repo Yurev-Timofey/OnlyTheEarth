@@ -81,6 +81,10 @@ public class MyContactListener implements ContactListener {
                     ((UserData) fixtureB.getBody().getUserData()),
                     new ObjectType[]{ObjectType.BULLET});
 
+            UserData heart = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
+                    ((UserData) fixtureB.getBody().getUserData()),
+                    new ObjectType[]{ObjectType.HPBOOST});
+
 
             if ((person != null) && (ground != null)) {
                 switch ((short) contact.getWorldManifold().getNormal().angle()) {
@@ -92,6 +96,10 @@ public class MyContactListener implements ContactListener {
                         person.setStatus(ObjectStatus.CLIMB_TO_BLOCK);
                         break;
                 }
+            }
+            if (person != null && heart != null && person.getObjType().equals(ObjectType.PLAYER)) {
+                person.setStatus(ObjectStatus.HEALED);
+                heart.setStatus(ObjectStatus.TO_DISPOSE);
             }
 
             if ((person != null) && (bullet != null)) {

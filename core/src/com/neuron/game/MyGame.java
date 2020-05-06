@@ -34,17 +34,16 @@ public class MyGame extends Game {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-
         Configuration.aspectRatio = (float) width / height;           //Вычисление соотношения экрана для правильного маштаба
-
-        Configuration.viewportHeight = Configuration.SCREEN_WIDTH / Configuration.aspectRatio;
         if (Configuration.aspectRatio > 2) {
+            Configuration.viewportHeight = Configuration.SCREEN_WIDTH / Configuration.aspectRatio;
             Configuration.viewportWidth = Configuration.SCREEN_WIDTH;
             Configuration.viewportLeft = 0;
             Configuration.viewportRight = Configuration.viewportWidth;
             Configuration.viewportBottom = (Configuration.SCREEN_HEIGHT - Configuration.viewportHeight) / 2;
-            Configuration.viewportTop = Configuration.viewportBottom + Configuration.viewportHeight;
+            Configuration.viewportTop = Configuration.viewportHeight - Configuration.viewportBottom;
         } else {
+            Configuration.viewportHeight = Configuration.SCREEN_HEIGHT;
             Configuration.viewportWidth = Configuration.SCREEN_HEIGHT * Configuration.aspectRatio;
             Configuration.viewportLeft = (Configuration.SCREEN_WIDTH - Configuration.viewportWidth) / 2;
             Configuration.viewportRight = Configuration.viewportLeft + Configuration.viewportWidth;

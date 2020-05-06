@@ -1,4 +1,4 @@
-package com.neuron.game.gameLogic.tools;
+package com.neuron.game.TrashBin;
 
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;

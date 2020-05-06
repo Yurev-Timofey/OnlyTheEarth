@@ -15,10 +15,8 @@ public abstract class Gun extends Actor {
     Sound fireSound;
     World world;
     TextureRegion bulletTexture;
-    boolean firing = false;
+    boolean firing = false ;
 
-    //    int ammo;
-//    int damage;
     float fireRate;
     int direction;
     float timeSinceLastShoot;
@@ -26,16 +24,17 @@ public abstract class Gun extends Actor {
 
     public Vector2 bulletStartPoint;
 
-    public Gun(World world, Person person, TextureRegion texture) {
+    public Gun(World world, Person person, TextureRegion texture, TextureRegion bulletTexture) {
         this.person = person;
         this.texture = texture;
         this.world = world;
+        this.bulletTexture = bulletTexture;
         setSize(texture.getRegionWidth(), texture.getRegionHeight());
     }
 
     public void fire() {
         if (timeSinceLastShoot >= fireRate) {
-            new Bullet(world, bulletStartPoint, direction, getStage());
+            new Bullet(world, bulletStartPoint, direction, getStage(), bulletTexture);
             timeSinceLastShoot = 0;
         }
     }

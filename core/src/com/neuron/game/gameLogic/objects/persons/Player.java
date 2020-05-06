@@ -8,7 +8,7 @@ import com.neuron.game.gameLogic.objects.userData.ObjectType;
 public class Player extends Person {
 
     public Player(World world, TextureAtlas atlas, Vector2 position) {
-        super(world, 250, 3, atlas, position, 1.2f, ObjectType.PLAYER);
+        super(world, 100, 3, atlas, position, 1.2f, ObjectType.PLAYER);
     }
 
     @Override

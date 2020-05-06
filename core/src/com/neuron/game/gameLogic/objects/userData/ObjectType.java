@@ -5,5 +5,6 @@ public enum ObjectType {
     PLAYER,
     GROUND,
     WALL,
+    HPBOOST,
     ENEMY
 }
