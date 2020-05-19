@@ -1,4 +1,4 @@
-package com.neuron.game.gameLogic.objects.userData;
+package com.neuron.game.gameLogic.contacts.userData;
 
 public class UserData {
     private ObjectType objType;
@@ -6,7 +6,7 @@ public class UserData {
     private SeeEnemy seeEnemy;
     private boolean grounded;
 
-    public UserData(ObjectType objType, ObjectStatus status, SeeEnemy seeEnemy, boolean grounded) { //TODO Добавить уровень абстракции
+    public UserData(ObjectType objType, ObjectStatus status, SeeEnemy seeEnemy, boolean grounded) {
         this.objType = objType;
         this.status = status;
         this.seeEnemy = seeEnemy;

@@ -1,15 +1,15 @@
-package com.neuron.game.gameLogic.tools;
+package com.neuron.game.gameLogic.contacts;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.neuron.game.gameLogic.objects.userData.ObjectStatus;
-import com.neuron.game.gameLogic.objects.userData.ObjectType;
-import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
-import com.neuron.game.gameLogic.objects.userData.SensorUserData;
-import com.neuron.game.gameLogic.objects.userData.UserData;
+import com.neuron.game.gameLogic.contacts.userData.ObjectStatus;
+import com.neuron.game.gameLogic.contacts.userData.ObjectType;
+import com.neuron.game.gameLogic.contacts.userData.SeeEnemy;
+import com.neuron.game.gameLogic.contacts.userData.SensorUserData;
+import com.neuron.game.gameLogic.contacts.userData.UserData;
 
 
 public class MyContactListener implements ContactListener {
@@ -19,7 +19,7 @@ public class MyContactListener implements ContactListener {
                 secondObject.equals(nameOfObject));
     }
 
-    private UserData findAndDeclare(UserData firstObject, UserData secondObject, ObjectType[] required) {
+    private UserData findAndReturn(UserData firstObject, UserData secondObject, ObjectType[] required) {
         for (ObjectType type : required) {
             if (firstObject.getObjType().equals(type)) {
                 return firstObject;
@@ -68,24 +68,27 @@ public class MyContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
+        UserData person = findAndReturn((UserData) fixtureA.getBody().getUserData(),
+                (UserData) fixtureB.getBody().getUserData(),
+                new ObjectType[]{ObjectType.PLAYER, ObjectType.ENEMY});
+
+        UserData heart = findAndReturn(((UserData) fixtureA.getBody().getUserData()),
+                ((UserData) fixtureB.getBody().getUserData()),
+                new ObjectType[]{ObjectType.HP_BOOST});
+
+        UserData bullet = findAndReturn(((UserData) fixtureA.getBody().getUserData()),
+                ((UserData) fixtureB.getBody().getUserData()),
+                new ObjectType[]{ObjectType.BULLET});
+
+        UserData ground = findAndReturn(((UserData) fixtureA.getBody().getUserData()),
+                ((UserData) fixtureB.getBody().getUserData()),
+                new ObjectType[]{ObjectType.GROUND});
+
+        UserData NextLevel = findAndReturn(((UserData) fixtureA.getBody().getUserData()),
+                ((UserData) fixtureB.getBody().getUserData()),
+                new ObjectType[]{ObjectType.NEXT_LEVEL});
+
         if (!fixtureA.isSensor() && !fixtureB.isSensor()) {
-            UserData person = findAndDeclare((UserData) fixtureA.getBody().getUserData(),
-                    (UserData) fixtureB.getBody().getUserData(),
-                    new ObjectType[]{ObjectType.PLAYER, ObjectType.ENEMY});
-
-            UserData ground = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
-                    ((UserData) fixtureB.getBody().getUserData()),
-                    new ObjectType[]{ObjectType.GROUND});
-
-            UserData bullet = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
-                    ((UserData) fixtureB.getBody().getUserData()),
-                    new ObjectType[]{ObjectType.BULLET});
-
-            UserData heart = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
-                    ((UserData) fixtureB.getBody().getUserData()),
-                    new ObjectType[]{ObjectType.HPBOOST});
-
-
             if ((person != null) && (ground != null)) {
                 switch ((short) contact.getWorldManifold().getNormal().angle()) {
                     case 90:
@@ -97,24 +100,32 @@ public class MyContactListener implements ContactListener {
                         break;
                 }
             }
-            if (person != null && heart != null && person.getObjType().equals(ObjectType.PLAYER)) {
-                person.setStatus(ObjectStatus.HEALED);
-                heart.setStatus(ObjectStatus.TO_DISPOSE);
-            }
-
-            if ((person != null) && (bullet != null)) {
-                person.setStatus(ObjectStatus.DAMAGED);
-                bullet.setStatus(ObjectStatus.TO_DISPOSE);
-            }
         } else if (fixtureA.isSensor() && fixtureB.isSensor()) {
             if (areContactingWith(ObjectType.PLAYER, ((UserData) fixtureA.getBody().getUserData()).getObjType(),
-                    ((UserData) fixtureB.getBody().getUserData()).getObjType())) {
+                    ((UserData) fixtureB.getBody().getUserData()).getObjType()) &&
+                    areContactingWith(ObjectType.ENEMY, ((UserData) fixtureA.getBody().getUserData()).getObjType(),
+                            ((UserData) fixtureB.getBody().getUserData()).getObjType())) {
                 if (((SensorUserData) fixtureA.getUserData()).getSensorType().equals(SensorUserData.SensorType.NearSensor) &&
                         ((SensorUserData) fixtureB.getUserData()).getSensorType().equals(SensorUserData.SensorType.NearSensor))
                     leftOrRight(fixtureA, fixtureB, false);
                 else if (((SensorUserData) fixtureA.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor) &&
                         ((SensorUserData) fixtureB.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor))
                     leftOrRight(fixtureA, fixtureB, true);
+            }
+        } else {
+            if (person != null && heart != null && person.getObjType().equals(ObjectType.PLAYER) &&
+                    (((SensorUserData) fixtureA.getUserData()).getSensorType().equals(SensorUserData.SensorType.Default) &&
+                            ((SensorUserData) fixtureB.getUserData()).getSensorType().equals(SensorUserData.SensorType.Default))) {
+                person.setStatus(ObjectStatus.HEALED);
+                heart.setStatus(ObjectStatus.TO_DISPOSE);
+            }
+            if (bullet != null) {
+                if ((person != null))
+                    person.setStatus(ObjectStatus.DAMAGED);
+                bullet.setStatus(ObjectStatus.TO_DISPOSE);
+            }
+            if (person != null && person.getObjType().equals(ObjectType.PLAYER) && NextLevel != null){
+                NextLevel.setStatus(ObjectStatus.JUMP_TO_NEXT_LEVEL);
             }
         }
     }
@@ -125,9 +136,16 @@ public class MyContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
+//        UserData bullet = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
+//                ((UserData) fixtureB.getBody().getUserData()),
+//                new ObjectType[]{ObjectType.BULLET});
+
+
         if (contact.getFixtureA().isSensor() && contact.getFixtureB().isSensor() && areContactingWith(ObjectType.PLAYER,
                 ((UserData) fixtureA.getBody().getUserData()).getObjType(),
-                ((UserData) fixtureB.getBody().getUserData()).getObjType())) {
+                ((UserData) fixtureB.getBody().getUserData()).getObjType()) &&
+                areContactingWith(ObjectType.ENEMY, ((UserData) fixtureA.getBody().getUserData()).getObjType(),
+                        ((UserData) fixtureB.getBody().getUserData()).getObjType())) {
             if (((SensorUserData) fixtureA.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor) &&
                     ((SensorUserData) fixtureB.getUserData()).getSensorType().equals(SensorUserData.SensorType.FarSensor)) {
                 ((UserData) contact.getFixtureA().getBody().getUserData()).setSeeEnemy(SeeEnemy.DONT_SEE_ENEMY);

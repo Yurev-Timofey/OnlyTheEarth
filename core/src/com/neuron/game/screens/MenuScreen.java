@@ -8,20 +8,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.neuron.game.Configuration;
-import com.neuron.game.MyGame;
-import com.neuron.game.gameLogic.objects.Background;
+import com.neuron.game.gameLogic.MyAnimatedActor;
+import com.neuron.game.OnlyTheEarth;
 
 public class MenuScreen implements Screen {
 
-    private final MyGame game;
+    private final OnlyTheEarth game;
     private Stage stage;
     Table menuButtons;
     Table settingsButtons;
@@ -33,7 +36,7 @@ public class MenuScreen implements Screen {
     private AssetManager assetManager;
 
 
-    public MenuScreen(final MyGame game) {
+    public MenuScreen(final OnlyTheEarth game) {
         this.game = game;
 
         String path;
@@ -55,35 +58,53 @@ public class MenuScreen implements Screen {
         stage = new Stage(viewport);
 
         //Фон меню
-        Background background = new Background(assetManager.get(("images/mainMenuBack" + path + ".png"), Texture.class), viewport.getWorldWidth(), viewport.getWorldHeight());
-        background.setPosition(0, 0);
-        stage.addActor(background);
+//        Background background = new Background(assetManager.get(("images/mainMenuBack" + path + ".png"), Texture.class), viewport.getWorldWidth(), viewport.getWorldHeight());
+//        background.setPosition(0, 0);
+//        stage.addActor(background);
 
         createButtons();
         activateMenuButtons();
 
+        stage.addActor(new MyAnimatedActor(13, new Vector2(((float) Gdx.graphics.getWidth() / 2), Gdx.graphics.getHeight() / 1.5f),
+                assetManager.get("animations/Logo.atlas", TextureAtlas.class), Gdx.graphics.getHeight() / 80));
     }
 
     private void loadAssets(String path) {
         assetManager = new AssetManager();
 
         assetManager.load("music/mainTheme.mp3", Music.class);
-        assetManager.load("images/button.png", Texture.class);
+        assetManager.load("images/MenuButtons.atlas", TextureAtlas.class);
         assetManager.load("images/mainMenuBack" + path + ".png", Texture.class);
+        assetManager.load("animations/Logo.atlas", TextureAtlas.class);
 
         assetManager.finishLoading();
     }
 
     private void createButtons() {
+        final float PAD = 9f;
+        final float buttonsSize = Configuration.viewportHeight / 92;
         //Определяем стиль кнопок
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = game.menuFont;
-        Texture buttonImg = assetManager.get("images/button.png");
-        Sprite buttonSprite = new Sprite(buttonImg);
-        buttonSprite.setSize(Gdx.graphics.getWidth() / 4f, Gdx.graphics.getWidth() / (4f * (float) buttonImg.getWidth() / buttonImg.getHeight()));
-        SpriteDrawable button = new SpriteDrawable(buttonSprite);
-        textButtonStyle.up = button;
-        textButtonStyle.down = button;
+        Skin buttonSkin = new Skin(assetManager.get("images/MenuButtons.atlas", TextureAtlas.class));
+
+        Sprite buttonUpSprite = new Sprite(buttonSkin.getSprite("Big_button"));
+        Sprite buttonDownSprite = new Sprite(buttonSkin.getSprite("Big_button_pressed"));
+
+        buttonUpSprite.setSize(Gdx.graphics.getWidth() / buttonsSize * 1.19f,
+                Gdx.graphics.getWidth() / (buttonsSize * (float) buttonUpSprite.getRegionWidth() / buttonUpSprite.getRegionHeight()));
+        buttonDownSprite.setSize(Gdx.graphics.getWidth() / buttonsSize * 1.19f,
+                Gdx.graphics.getWidth() / (buttonsSize * (buttonsSize * (float) buttonDownSprite.getRegionWidth() / buttonDownSprite.getRegionHeight())));
+
+        SpriteDrawable buttonUp = new SpriteDrawable(buttonUpSprite);
+        SpriteDrawable buttonDown = new SpriteDrawable(buttonDownSprite);
+
+        textButtonStyle.up = buttonUp;
+        textButtonStyle.down = buttonDown;
+
+        textButtonStyle.unpressedOffsetY = 5;
+        textButtonStyle.checkedOffsetY = 5;
+        textButtonStyle.pressedOffsetY = 2;
 
         //Кнопка "Играть"
         TextButton play = new TextButton("Играть", textButtonStyle);
@@ -103,6 +124,7 @@ public class MenuScreen implements Screen {
 
         //Кнопка настроек
         TextButton settings = new TextButton("Настройки", textButtonStyle);
+
         settings.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -122,13 +144,13 @@ public class MenuScreen implements Screen {
         menuButtons.center().bottom();
 
         menuButtons.add(play);
-        menuButtons.row().space(stage.getWidth() / 200);
+        menuButtons.row().space(PAD);
         menuButtons.add(settings);
-        menuButtons.padBottom(stage.getWidth() / 50f + Configuration.viewportBottom);
+        menuButtons.padBottom(PAD * 2 + Configuration.viewportBottom);
+
 
         /* НАСТРОЙКИ */
-
-        final TextButton volume = new TextButton("Громкость: " + 100 + '%', textButtonStyle);
+        final TextButton volume = new TextButton("Громкость:" + 100 + '%', textButtonStyle);
         volume.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -138,13 +160,11 @@ public class MenuScreen implements Screen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (Configuration.volume < 0.2f) {
+                if (Configuration.volume < 0.2f)
                     Configuration.volume = 1f;
-                    volume.setText("Громкость: " + 100 + '%');
-                } else {
+                else
                     Configuration.volume -= 0.2f;
-                    volume.setText("Громкость: " + Math.round(Configuration.volume * 100) + '%');
-                }
+                volume.setText("Громкость:" + Math.round(Configuration.volume * 100) + '%');
                 music.setVolume(Configuration.volume);
             }
         });
@@ -168,10 +188,9 @@ public class MenuScreen implements Screen {
         settingsButtons.center().bottom();
 
         settingsButtons.add(volume);
-        settingsButtons.row().space(stage.getWidth() / 200);
+        settingsButtons.row().space(PAD);
         settingsButtons.add(back);
-        settingsButtons.padBottom(stage.getWidth() / 50f + Configuration.viewportBottom);
-        settingsButtons.debug();
+        settingsButtons.padBottom(PAD * 2 + Configuration.viewportBottom);
     }
 
     private void activateMenuButtons() {

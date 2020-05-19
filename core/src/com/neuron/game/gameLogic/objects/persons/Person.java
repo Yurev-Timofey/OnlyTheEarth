@@ -12,14 +12,15 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.neuron.game.gameLogic.objects.userData.ObjectStatus;
-import com.neuron.game.gameLogic.objects.userData.ObjectType;
-import com.neuron.game.gameLogic.objects.guns.AK_47;
+import com.neuron.game.gameLogic.contacts.userData.ObjectStatus;
+import com.neuron.game.gameLogic.contacts.userData.ObjectType;
+import com.neuron.game.gameLogic.objects.guns.PlayerGun;
 import com.neuron.game.gameLogic.objects.guns.Gun;
-import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
-import com.neuron.game.gameLogic.objects.userData.SensorUserData;
-import com.neuron.game.gameLogic.objects.userData.UserData;
+import com.neuron.game.gameLogic.contacts.userData.SeeEnemy;
+import com.neuron.game.gameLogic.contacts.userData.SensorUserData;
+import com.neuron.game.gameLogic.contacts.userData.UserData;
 import com.neuron.game.gameLogic.states.PlayerStates.StandingState;
 import com.neuron.game.gameLogic.states.State;
 
@@ -48,16 +49,23 @@ public abstract class Person extends Actor {
     protected Fixture NearSensorFixture;
     protected Fixture FarSensorFixture;
 
-    State state;
+    protected State state;
 
     protected Gun gun;
 
-    static float SIZE_IN_METERS;
-    static int SIZE_IN_PIXELS;
+    protected float SIZE_IN_METERS;
+    protected int SIZE_IN_PIXELS;
+    protected float HALF_X_SIZE;
+    protected float HALF_Y_SIZE;
+    protected float X_PAD;
+    protected float Y_PAD;
 
-    protected Person(World world, int maxHp, float maxVelocity, TextureAtlas atlas, Vector2 position, float sizeInMeters, ObjectType type) {
+    protected Person(World world, int maxHp, float maxVelocity, TextureAtlas atlas, Vector2 position,
+                     float sizeInMeters, ObjectType type, float X_PAD, float Y_PAD) {
         this.maxHp = maxHp;
         this.maxVelocity = maxVelocity;
+        this.X_PAD = X_PAD;
+        this.Y_PAD = Y_PAD;
         hp = maxHp;
         this.world = world;
         SIZE_IN_METERS = sizeInMeters;
@@ -71,10 +79,8 @@ public abstract class Person extends Actor {
         state = new StandingState(this);
     }
 
-    private void createAnimations(TextureAtlas atlas) {
+    protected void createAnimations(TextureAtlas atlas) {
         Array<TextureRegion> frames = new Array<>();
-//        for (int i = 0; i < 2; i++)
-//            frames.add(new TextureRegion(atlas.findRegion("frame_" + i)));
         frames.add(new TextureRegion(atlas.findRegion("frame_" + 0)));
         standingAnimation = new Animation(0.3f, frames);
         frames.clear();
@@ -91,6 +97,9 @@ public abstract class Person extends Actor {
     }
 
     private void definePersonBody(Vector2 position, ObjectType type) {
+        HALF_X_SIZE = SIZE_IN_METERS / 2 - X_PAD / SIZE_IN_PIXELS;
+        HALF_Y_SIZE = SIZE_IN_METERS / 2 - Y_PAD / SIZE_IN_PIXELS;
+
         BodyDef def = new BodyDef();
         def.position.set(position);
         def.type = BodyDef.BodyType.DynamicBody;
@@ -98,10 +107,10 @@ public abstract class Person extends Actor {
         body = world.createBody(def);
 
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(SIZE_IN_METERS / 6, SIZE_IN_METERS / 3);
-        fixture = body.createFixture(polygonShape, 13);
-        fixture.setFriction(2);
+        polygonShape.setAsBox(HALF_X_SIZE, HALF_Y_SIZE);
+        fixture = body.createFixture(polygonShape, 9);
         polygonShape.dispose();
+        fixture.setFriction(0);
 
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(1.6f);
@@ -110,6 +119,7 @@ public abstract class Person extends Actor {
         FarSensorFixture = body.createFixture(circleShape, 0);
         circleShape.dispose();
 
+        fixture.setUserData(new SensorUserData(SensorUserData.SensorType.Default, type));
         NearSensorFixture.setSensor(true);
         FarSensorFixture.setSensor(true);
         NearSensorFixture.setUserData(new SensorUserData(SensorUserData.SensorType.NearSensor, type));
@@ -119,25 +129,18 @@ public abstract class Person extends Actor {
     }
 
 
-    public Gun createGun(TextureRegion texture, TextureRegion bulletTexture) {
-        gun = new AK_47(world, this, texture, bulletTexture);
-        return gun;
+    public void createGun(Stage stage, TextureRegion bulletTexture) {
+        gun = new PlayerGun(world, this, stage, bulletTexture);
     }
 
     public void move(int direction) {
         velocity = maxVelocity * direction;
-        fixture.setFriction(0);
     }
 
-    public void climbToBlock() {
-        setGrounded(false);
-        body.applyLinearImpulse(0, 10, body.getPosition().x, body.getPosition().y, true); //TODO
-    }
 
     public void resetVelocity() {
         velocity = 0;
         body.setLinearVelocity(0, body.getLinearVelocity().y);
-        fixture.setFriction(2);
     }
 
     public void jump() {
@@ -147,8 +150,12 @@ public abstract class Person extends Actor {
         }
     }
 
-    private TextureRegion getFrame() {
-        return (TextureRegion) currentAnimation.getKeyFrame(state.getTimer(), true);
+    private void climbToBlock() {
+        setGrounded(false);
+        float impulseX = 0.03f;
+        if (!isRunningRight)
+            impulseX *= -1;
+        body.applyLinearImpulse(impulseX, 10, body.getPosition().x, body.getPosition().y, true);
     }
 
     public void setAnimation(State.states stateName) {
@@ -178,12 +185,15 @@ public abstract class Person extends Actor {
         else if (velocity > 0)
             isRunningRight = true;
 
-        textureRegion = getFrame();
+        if (gun != null)
+            gun.update(delta);
 
         super.act(delta);
     }
 
     private void userDataChecker(UserData data) {
+        if (data == null)
+            return;
         isGrounded = (data.isGrounded() && body.getLinearVelocity().y < 1 && body.getLinearVelocity().y > -1);
         switch (data.getStatus()) {
             case DAMAGED:
@@ -206,19 +216,29 @@ public abstract class Person extends Actor {
                 data.setStatus(ObjectStatus.DEFAULT);
                 break;
         }
-        if (state.getType().equals(State.states.JumpingState))
-            data.setStatus(ObjectStatus.DEFAULT);
+//        if (state.getType().equals(State.states.JumpingState))
+//            data.setStatus(ObjectStatus.DEFAULT);
+    }
+
+    public int getRealX() {
+        return (int) (body.getPosition().x * PIXELS_IN_METER);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        setPosition((body.getPosition().x - SIZE_IN_METERS / 2) * PIXELS_IN_METER,
-                (body.getPosition().y - SIZE_IN_METERS / 3) * PIXELS_IN_METER);
+        textureRegion = (TextureRegion) currentAnimation.getKeyFrame(state.getTimer(), true);
 
-        if (!isRunningRight() && !textureRegion.isFlipX())
+        if (!isRunningRight && !textureRegion.isFlipX() || (isRunningRight && textureRegion.isFlipX()))
             textureRegion.flip(true, false);
-        else if (isRunningRight() && textureRegion.isFlipX())
-            textureRegion.flip(true, false);
+
+        float PAD = HALF_X_SIZE;
+        if (!isRunningRight) {
+            PAD *= -1;
+            PAD += getWidth() / PIXELS_IN_METER;
+        }
+
+        setPosition((body.getPosition().x - PAD) * PIXELS_IN_METER,
+                (body.getPosition().y - HALF_Y_SIZE) * PIXELS_IN_METER - 2);
 
         batch.draw(textureRegion, getX(), getY(), getWidth(), getHeight());
     }
@@ -227,7 +247,7 @@ public abstract class Person extends Actor {
     public boolean remove() {
         alive = false;
         world.destroyBody(body);
-        gun.remove();
+        gun.dispose();
         return super.remove();
     }
 
@@ -247,7 +267,7 @@ public abstract class Person extends Actor {
         return state;
     }
 
-    public static int getSizeInPixels() {
+    public int getSizeInPixels() {
         return SIZE_IN_PIXELS;
     }
 
@@ -269,6 +289,6 @@ public abstract class Person extends Actor {
 
     public void setGrounded(boolean grounded) {
         isGrounded = grounded;
-        ((UserData) body.getUserData()).setGrounded(false);
+        ((UserData) body.getUserData()).setGrounded(grounded);
     }
 }

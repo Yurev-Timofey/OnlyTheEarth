@@ -1,10 +1,11 @@
-package com.neuron.game.gameLogic.objects.userData;
+package com.neuron.game.gameLogic.contacts.userData;
 
 public enum ObjectType {
     BULLET,
     PLAYER,
     GROUND,
     WALL,
-    HPBOOST,
+    NEXT_LEVEL,
+    HP_BOOST,
     ENEMY
 }

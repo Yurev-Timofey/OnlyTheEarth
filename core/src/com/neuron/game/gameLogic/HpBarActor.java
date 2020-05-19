@@ -1,4 +1,4 @@
-package com.neuron.game;
+package com.neuron.game.gameLogic;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.neuron.game.gameLogic.objects.persons.Player;

@@ -1,12 +1,12 @@
-package com.neuron.game.gameLogic.tools;
+package com.neuron.game.gameLogic.contacts;
 
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.neuron.game.gameLogic.objects.userData.ObjectType;
-import com.neuron.game.gameLogic.objects.userData.UserData;
+import com.neuron.game.gameLogic.contacts.userData.ObjectType;
+import com.neuron.game.gameLogic.contacts.userData.UserData;
 
 public class MyContactFilter implements ContactFilter {
-    private UserData findAndDeclare(UserData firstObject, UserData secondObject, ObjectType[] required) {
+    private UserData findAndReturn(UserData firstObject, UserData secondObject, ObjectType[] required) {
         for (ObjectType type : required) {
             if (firstObject.getObjType().equals(type)) {
                 return firstObject;
@@ -21,10 +21,11 @@ public class MyContactFilter implements ContactFilter {
 
     @Override
     public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-        UserData heart = findAndDeclare(((UserData) fixtureA.getBody().getUserData()),
+        UserData heart = findAndReturn(((UserData) fixtureA.getBody().getUserData()),
                 ((UserData) fixtureB.getBody().getUserData()),
-                new ObjectType[]{ObjectType.HPBOOST});
-        UserData person = findAndDeclare((UserData) fixtureA.getBody().getUserData(),
+                new ObjectType[]{ObjectType.HP_BOOST});
+
+        UserData person = findAndReturn((UserData) fixtureA.getBody().getUserData(),
                 (UserData) fixtureB.getBody().getUserData(),
                 new ObjectType[]{ObjectType.PLAYER, ObjectType.ENEMY});
 
@@ -34,6 +35,7 @@ public class MyContactFilter implements ContactFilter {
 
         if (!fixtureA.isSensor() && !fixtureB.isSensor())
             return !(((UserData) fixtureA.getBody().getUserData()).getObjType().equals(ObjectType.BULLET) && ((UserData) fixtureB.getBody().getUserData()).getObjType().equals(ObjectType.BULLET));
+
         return true;
     }
 }
