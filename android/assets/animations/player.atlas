@@ -1,34 +1,41 @@
 
-character.png
-size: 138,36
+player.png
+size: 168,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 frame_0
   rotate: false
-  xy: 2, 2
+  xy: 0, 0
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
-  index: 1
+  index: -1
 frame_1
   rotate: false
-  xy: 36, 2
+  xy: 34, 0
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
-  index: 2
+  index: -1
 frame_2
   rotate: false
-  xy: 70, 2
+  xy: 68, 0
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
-  index: 3
+  index: -1
 frame_3
   rotate: false
-  xy: 104, 2
+  xy: 102, 0
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
-  index: 4
+  index: -1
+frame_4
+  rotate: false
+  xy: 136, 0
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

@@ -19,7 +19,7 @@ public class AndroidLauncher extends AndroidApplication {
 						getWindow().getDecorView().SYSTEM_UI_FLAG_FULLSCREEN |
 						getWindow().getDecorView().SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-		initialize(new MyGame(), config);
+		initialize(new OnlyTheEarth(), config);
 
 
 	}

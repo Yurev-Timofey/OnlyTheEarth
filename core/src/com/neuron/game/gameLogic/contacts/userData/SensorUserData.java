@@ -1,4 +1,4 @@
-package com.neuron.game.gameLogic.objects.userData;
+package com.neuron.game.gameLogic.contacts.userData;
 
 public class SensorUserData {
     private SensorType sensorType;
@@ -18,6 +18,7 @@ public class SensorUserData {
     }
 
     public enum SensorType {
+        Default,
         FarSensor,
         NearSensor
     }

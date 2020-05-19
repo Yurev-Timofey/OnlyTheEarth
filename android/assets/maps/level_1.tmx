@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="250" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="56">
+ <tileset firstgid="1" source="Set/set.tsx"/>
+ <layer id="1" name="Слой тайлов 1" width="250" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt1lsOgkAMBVBQQ0Tj/rcrC8CAMO0McE5yv+fVNtN1AAAAAAAQa6y9AYrLetN30jrAubxqb4C/tfxm/jHU/I/4C63T8j21vDcAAAAAAAC4sk9wgFxzffic8gjK8GNNswDKWdPTtyn3oPQz622dBWZFruh/Xua7za115NpZ6uvIno6cBVmzooWUtGcfkf+87HdbOsuw9YITHa2vW50VLaR03e/p1YzayXq3pbP0AXcfOauu0tdnTem6Vw/17j57VomIiIiInD1fwRUdMg==
+  </data>
+ </layer>
+ <objectgroup id="2" name="Земля">
+  <object id="1" x="0" y="320" width="16" height="16"/>
+  <object id="2" x="16" y="336" width="16" height="16"/>
+  <object id="5" x="32" y="352" width="624" height="16"/>
+  <object id="6" x="656" y="336" width="48" height="16"/>
+  <object id="7" x="704" y="320" width="64" height="16"/>
+  <object id="8" x="768" y="304" width="64" height="16"/>
+  <object id="9" x="832" y="288" width="80" height="16"/>
+  <object id="10" x="912" y="272" width="384" height="16"/>
+  <object id="11" x="1296" y="288" width="144" height="16"/>
+  <object id="12" x="1440" y="304" width="272" height="16"/>
+  <object id="14" x="1712" y="320" width="800" height="16"/>
+  <object id="15" x="2512" y="336" width="304" height="16"/>
+  <object id="16" x="2816" y="320" width="240" height="16"/>
+  <object id="17" x="3056" y="304" width="416" height="16"/>
+  <object id="18" x="3472" y="320" width="400" height="16"/>
+  <object id="19" x="3872" y="304" width="128" height="16"/>
+ </objectgroup>
+ <objectgroup id="3" name="Невидимые стены">
+  <object id="20" x="-16" y="0" width="16" height="400"/>
+  <object id="21" x="4000" y="0" width="16" height="400"/>
+  <object id="22" x="-16" y="-16" width="4032" height="16"/>
+ </objectgroup>
+ <objectgroup id="4" name="Скелеты">
+  <object id="23" x="1088" y="256" width="16" height="16"/>
+  <object id="24" x="1376" y="272" width="16" height="16"/>
+  <object id="25" x="1632" y="288" width="16" height="16"/>
+  <object id="26" x="2000" y="304" width="16" height="16"/>
+  <object id="28" x="2320" y="304" width="16" height="16"/>
+  <object id="29" x="2688" y="320" width="16" height="16"/>
+  <object id="30" x="2928" y="304" width="16" height="16"/>
+  <object id="31" x="3216" y="288" width="16" height="16"/>
+  <object id="33" x="3504" y="304" width="16" height="16"/>
+  <object id="34" x="3808" y="304" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="5" name="Игрок">
+  <object id="35" x="160" y="336" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="6" name="Переход на новые ">
+  <object id="55" x="3904" y="208" width="48" height="96"/>
+ </objectgroup>
+ <layer id="7" name="Слой тайлов 2" width="250" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt1lsNACAMA8ApwL9cLMAH2YM7BU3WNIsAAAAAAAAAAAAAAAAAAACA/6zsAADACH6KOdySbK87WLnjlbOd6J4f6M8OAQAAwL0NYIYAcQ==
+  </data>
+ </layer>
+</map>

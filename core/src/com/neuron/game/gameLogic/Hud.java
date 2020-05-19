@@ -1,9 +1,10 @@
-package com.neuron.game.gameLogic.objects;
+package com.neuron.game.gameLogic;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -14,11 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.neuron.game.Configuration;
-import com.neuron.game.HpBarActor;
-import com.neuron.game.MyActor;
 import com.neuron.game.gameLogic.objects.persons.Player;
 
-public class Hud {
+public class Hud extends Group {
     private final FillViewport viewport;
     private Table buttonsTable;
     private Player player;
@@ -28,6 +27,7 @@ public class Hud {
     private final int PAD = 9;
     private float position = 0;
     private boolean gameOverLabelCreated = false;
+    private boolean gameWinLabelCreated = false;
 
     public enum buttons {
         LEFT("Button_left"),
@@ -40,8 +40,6 @@ public class Hud {
         buttons(String name) {
             this.name = name;
         }
-
-
     }
 
     public Hud(TextureAtlas atlas, FillViewport viewport, Player player) {
@@ -54,7 +52,8 @@ public class Hud {
         hpBar = new HpBarActor(skin.getRegion("hpBar"), player, 4);
 
         hpFrame.setPosition(Configuration.viewportLeft + PAD * 2, Configuration.viewportHeight - PAD * 2 - hpFrame.getHeight());
-        hpBar.setPosition(Configuration.viewportLeft + PAD * 2 + (hpFrame.getWidth() - hpBar.getWidth()) - 8, Configuration.viewportHeight - PAD * 2 - hpBar.getHeight());
+        hpBar.setPosition(Configuration.viewportLeft + PAD * 2 + (hpFrame.getWidth() - hpBar.getWidth()) - 8,
+                Configuration.viewportHeight - PAD * 2 - hpBar.getHeight());
 
         buttonsTable = new Table();
         buttonsTable.setFillParent(true);
@@ -67,6 +66,10 @@ public class Hud {
         buttonsTable.bottom().left();
         buttonsTable.padBottom(Configuration.viewportBottom + PAD);
         buttonsTable.padLeft(Configuration.viewportLeft + PAD);
+
+        addActor(buttonsTable);
+        addActor(hpFrame);
+        addActor(hpBar);
     }
 
     private Actor createButton(final buttons buttonName) {
@@ -102,21 +105,48 @@ public class Hud {
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = font;
 
-        Label gameOver = new Label("GAME OVER", style);
+        Label gameOver = new Label("ИГРА ОКОНЧЕНА", style);
         gameOver.setPosition(Configuration.viewportLeft + position + (Configuration.viewportWidth - gameOver.getMinWidth()) / 2,
                 (Configuration.viewportHeight - gameOver.getMinHeight()) / 2);
         stage.addActor(gameOver);
         gameOverLabelCreated = true;
     }
 
+    public void gameWin(Stage stage, BitmapFont font){
+        buttonsTable.remove();
+        hpFrame.remove();
+        hpBar.remove();
+
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.font = font;
+
+        Label gameOver = new Label("ВЫ ПРОШЛИ ИГРУ!", style);
+        gameOver.setPosition(Configuration.viewportLeft + position + (Configuration.viewportWidth - gameOver.getMinWidth()) / 2,
+                (Configuration.viewportHeight - gameOver.getMinHeight()) / 2);
+        stage.addActor(gameOver);
+        gameWinLabelCreated = true;
+    }
+
     public boolean isGameOverLabelCreated() {
         return gameOverLabelCreated;
     }
 
-    public void addToStage(Stage stage) {
-        stage.addActor(buttonsTable);
-        stage.addActor(hpFrame);
-        stage.addActor(hpBar);
+    public boolean isGameWinLabelCreated() {
+        return gameWinLabelCreated;
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        setZIndex(getStage().getActors().size - 1);
+    }
+
+    @Override
+    public boolean remove() {
+        buttonsTable.remove();
+        hpBar.remove();
+        hpFrame.remove();
+        return super.remove();
     }
 
     public void setPosition(float x, float y) {

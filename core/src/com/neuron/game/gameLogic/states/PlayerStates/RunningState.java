@@ -1,7 +1,7 @@
 package com.neuron.game.gameLogic.states.PlayerStates;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.neuron.game.gameLogic.objects.Hud;
+import com.neuron.game.gameLogic.Hud;
 import com.neuron.game.gameLogic.objects.persons.Person;
 import com.neuron.game.gameLogic.states.State;
 

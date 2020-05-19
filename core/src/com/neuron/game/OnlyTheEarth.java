@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.neuron.game.screens.MenuScreen;
 
 
-public class MyGame extends Game {
+public class OnlyTheEarth extends Game {
     public BitmapFont gameFont;
     public BitmapFont menuFont;
 
@@ -21,12 +21,12 @@ public class MyGame extends Game {
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
         param.size = (int) (Configuration.SCREEN_HEIGHT / 16.5); // Размер шрифта
         param.mono = true; //Отключение сглаживания шрифта
-        param.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.:;,{}:\"´`'<>"; // Наши символы
-        gameFont = generator.generateFont(param); // Генерируем шрифт
+        param.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.:;,{}:\"´`'<>";
+        gameFont = generator.generateFont(param);
         gameFont.setColor(Color.WHITE); // Цвет белый
         param.size = Gdx.graphics.getWidth() / 28;
         menuFont = generator.generateFont(param);
-        generator.dispose(); // Уничтожаем наш генератор за ненадобностью.
+        generator.dispose();
 
         setScreen(new MenuScreen(this));   //при запуске игры открываем экран с меню
     }

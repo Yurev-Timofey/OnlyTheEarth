@@ -1,4 +1,4 @@
-package com.neuron.game;
+package com.neuron.game.gameLogic;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class MyActor extends Actor {
     protected TextureRegion textureRegion;
 
-    public MyActor(TextureRegion textureRegion, int size) {
+    public MyActor(TextureRegion textureRegion, float size) {
         this.textureRegion = textureRegion;
         setWidth(textureRegion.getRegionWidth() * size);
         setHeight(textureRegion.getRegionHeight() * size);

@@ -4,21 +4,18 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.neuron.game.gameLogic.objects.HpBoost;
-import com.neuron.game.gameLogic.objects.userData.SeeEnemy;
-import com.neuron.game.gameLogic.objects.userData.ObjectType;
+import com.neuron.game.gameLogic.contacts.userData.ObjectType;
 import com.neuron.game.gameLogic.objects.persons.Person;
-import com.neuron.game.gameLogic.objects.userData.UserData;
-import com.neuron.game.gameLogic.states.State;
+import com.neuron.game.gameLogic.contacts.userData.UserData;
 
 public abstract class Enemy extends Person {
     boolean seePlayer = false;
-    TextureRegion HpBoostTexture;
+    TextureAtlas HpBoostAnimation;
 
-    public Enemy(World world, TextureAtlas atlas, Vector2 position, float sizeInMeters, int maxHp, TextureRegion HpBoostTexture) {
-        super(world, maxHp, 2, atlas, position, sizeInMeters, ObjectType.ENEMY);
-        this.HpBoostTexture = HpBoostTexture;
+    public Enemy(World world, TextureAtlas atlas, Vector2 position, float sizeInMeters, int maxHp, TextureAtlas HpBoostAnimation) {
+        super(world, maxHp, 2, atlas, position, sizeInMeters, ObjectType.ENEMY, 0, 0);
+        this.HpBoostAnimation = HpBoostAnimation;
     }
 
     private void attack() {
@@ -44,26 +41,25 @@ public abstract class Enemy extends Person {
                 resetVelocity();
                 attack();
                 break;
-            case SEE_ENEMY_UP_RIGHT:
-                isRunningRight = true;
-                jump();
-                attack();
-                break;
-            case SEE_ENEMY_UP_LEFT:
-                isRunningRight = false;
-                jump();
-                attack();
-                break;
+//            case SEE_ENEMY_UP_RIGHT:
+//                isRunningRight = true;
+//                jump();
+//                attack();
+//                break;
+//            case SEE_ENEMY_UP_LEFT:
+//                isRunningRight = false;
+//                jump();
+//                attack();
+//                break;
             default:
                 seePlayer = false;
         }
-
         super.act(delta);
     }
 
     @Override
     public boolean remove() {
-        new HpBoost(HpBoostTexture, world, body.getPosition(), getStage());
+        new HpBoost(HpBoostAnimation, world, new Vector2(body.getPosition().x, body.getPosition().y - SIZE_IN_METERS / 3), getStage());
         return super.remove();
     }
 }

@@ -1,0 +1,97 @@
+
+Logo.png
+size: 646,96
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+frame_1
+  rotate: false
+  xy: 2, 49
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_10
+  rotate: false
+  xy: 370, 2
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_11
+  rotate: false
+  xy: 462, 49
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_12
+  rotate: false
+  xy: 462, 2
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_13
+  rotate: false
+  xy: 554, 49
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_2
+  rotate: false
+  xy: 2, 2
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_3
+  rotate: false
+  xy: 94, 49
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_4
+  rotate: false
+  xy: 94, 2
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_5
+  rotate: false
+  xy: 186, 49
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_6
+  rotate: false
+  xy: 186, 2
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_7
+  rotate: false
+  xy: 278, 49
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_8
+  rotate: false
+  xy: 278, 2
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
+frame_9
+  rotate: false
+  xy: 370, 49
+  size: 90, 45
+  orig: 90, 45
+  offset: 0, 0
+  index: -1
