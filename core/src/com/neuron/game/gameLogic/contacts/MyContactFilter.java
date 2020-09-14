@@ -21,7 +21,7 @@ public class MyContactFilter implements ContactFilter {
 
     @Override
     public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-        UserData heart = findAndReturn(((UserData) fixtureA.getBody().getUserData()),
+        UserData hpBoost = findAndReturn(((UserData) fixtureA.getBody().getUserData()),
                 ((UserData) fixtureB.getBody().getUserData()),
                 new ObjectType[]{ObjectType.HP_BOOST});
 
@@ -29,9 +29,8 @@ public class MyContactFilter implements ContactFilter {
                 (UserData) fixtureB.getBody().getUserData(),
                 new ObjectType[]{ObjectType.PLAYER, ObjectType.ENEMY});
 
-        if (heart != null) {
+        if (hpBoost != null)
             return person != null && person.getObjType().equals(ObjectType.PLAYER);
-        }
 
         if (!fixtureA.isSensor() && !fixtureB.isSensor())
             return !(((UserData) fixtureA.getBody().getUserData()).getObjType().equals(ObjectType.BULLET) && ((UserData) fixtureB.getBody().getUserData()).getObjType().equals(ObjectType.BULLET));

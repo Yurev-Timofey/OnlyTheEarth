@@ -88,6 +88,7 @@ public class MyContactListener implements ContactListener {
                 ((UserData) fixtureB.getBody().getUserData()),
                 new ObjectType[]{ObjectType.NEXT_LEVEL});
 
+
         if (!fixtureA.isSensor() && !fixtureB.isSensor()) {
             if ((person != null) && (ground != null)) {
                 switch ((short) contact.getWorldManifold().getNormal().angle()) {
@@ -100,7 +101,7 @@ public class MyContactListener implements ContactListener {
                         break;
                 }
             }
-        } else if (fixtureA.isSensor() && fixtureB.isSensor()) {
+        } else if (fixtureA.isSensor() && fixtureB.isSensor()) {                                // TODO: 21.05.2020 Упростить
             if (areContactingWith(ObjectType.PLAYER, ((UserData) fixtureA.getBody().getUserData()).getObjType(),
                     ((UserData) fixtureB.getBody().getUserData()).getObjType()) &&
                     areContactingWith(ObjectType.ENEMY, ((UserData) fixtureA.getBody().getUserData()).getObjType(),

@@ -1,9 +1,10 @@
 package com.neuron.game.gameLogic.objects.persons.enemy;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.neuron.game.gameLogic.Hud;
 import com.neuron.game.gameLogic.objects.HpBoost;
 import com.neuron.game.gameLogic.contacts.userData.ObjectType;
 import com.neuron.game.gameLogic.objects.persons.Person;
@@ -13,8 +14,8 @@ public abstract class Enemy extends Person {
     boolean seePlayer = false;
     TextureAtlas HpBoostAnimation;
 
-    public Enemy(World world, TextureAtlas atlas, Vector2 position, float sizeInMeters, int maxHp, TextureAtlas HpBoostAnimation) {
-        super(world, maxHp, 2, atlas, position, sizeInMeters, ObjectType.ENEMY, 0, 0);
+    Enemy(World world, TextureAtlas atlas, Vector2 position, float sizeInMeters, int maxHp, TextureAtlas HpBoostAnimation) {
+        super(world, maxHp, 2, atlas, position, sizeInMeters, ObjectType.ENEMY, 17, 5);
         this.HpBoostAnimation = HpBoostAnimation;
     }
 
@@ -28,17 +29,21 @@ public abstract class Enemy extends Person {
             case SEE_ENEMY_FAR_LEFT:
                 isRunningRight = false;
                 seePlayer = false;
-                move(-1);
+                state.handleInput(InputEvent.Type.touchDown, Hud.buttons.LEFT);
                 break;
             case SEE_ENEMY_FAR_RIGHT:
                 isRunningRight = true;
                 seePlayer = false;
-                move(1);
+                state.handleInput(InputEvent.Type.touchDown, Hud.buttons.RIGHT);
                 break;
             case SEE_ENEMY_RIGHT:
+                seePlayer = true;
+                state.handleInput(InputEvent.Type.touchUp, Hud.buttons.RIGHT);
+                attack();
+                break;
             case SEE_ENEMY_LEFT:
                 seePlayer = true;
-                resetVelocity();
+                state.handleInput(InputEvent.Type.touchUp, Hud.buttons.LEFT);
                 attack();
                 break;
 //            case SEE_ENEMY_UP_RIGHT:
@@ -52,6 +57,7 @@ public abstract class Enemy extends Person {
 //                attack();
 //                break;
             default:
+                state.handleInput(InputEvent.Type.touchUp, Hud.buttons.LEFT);
                 seePlayer = false;
         }
         super.act(delta);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="250" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="56">
- <tileset firstgid="1" source="Set/set.tsx"/>
- <layer id="1" name="Слой тайлов 1" width="250" height="25">
+<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="250" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="57">
+ <tileset firstgid="1" source="Set/Grass/Grass.tsx"/>
+ <layer id="9" name="Слой тайлов 1" width="250" height="25">
   <data encoding="base64" compression="zlib">
-   eJzt1lsOgkAMBVBQQ0Tj/rcrC8CAMO0McE5yv+fVNtN1AAAAAAAQa6y9AYrLetN30jrAubxqb4C/tfxm/jHU/I/4C63T8j21vDcAAAAAAAC4sk9wgFxzffic8gjK8GNNswDKWdPTtyn3oPQz622dBWZFruh/Xua7za115NpZ6uvIno6cBVmzooWUtGcfkf+87HdbOsuw9YITHa2vW50VLaR03e/p1YzayXq3pbP0AXcfOauu0tdnTem6Vw/17j57VomIiIiInD1fwRUdMg==
+   eJzt18sOgjAQBVBijPj+/8+VjRskaWKHMtBzkrutQzsdYRgAAAAAAAAAfj2C13sGr5dd5v17Ba4V4b11ATuS7exaiO6PHvewRvQsq5WtHqAfvb3LAkAmvgMAAAAAgJJ70gD/m9+ny5RTspwX6jQrtnekGb/0W3vun9K9vk65Jcs45JkVGRKppo4W/wmtzq30LN86Mtvbvc46KzIkuu9r7mqL3ml1bqVnGVfY+zVnVS/3+qiJ7nv9sN3et55VIiIiIiJHzwcKmDCE
   </data>
  </layer>
  <objectgroup id="2" name="Земля">
@@ -13,9 +13,7 @@
   <object id="6" x="656" y="336" width="48" height="16"/>
   <object id="7" x="704" y="320" width="64" height="16"/>
   <object id="8" x="768" y="304" width="64" height="16"/>
-  <object id="9" x="832" y="288" width="80" height="16"/>
-  <object id="10" x="912" y="272" width="384" height="16"/>
-  <object id="11" x="1296" y="288" width="144" height="16"/>
+  <object id="9" x="832" y="288" width="608" height="16"/>
   <object id="12" x="1440" y="304" width="272" height="16"/>
   <object id="14" x="1712" y="320" width="800" height="16"/>
   <object id="15" x="2512" y="336" width="304" height="16"/>
@@ -29,8 +27,8 @@
   <object id="21" x="4000" y="0" width="16" height="400"/>
   <object id="22" x="-16" y="-16" width="4032" height="16"/>
  </objectgroup>
- <objectgroup id="4" name="Скелеты">
-  <object id="23" x="1088" y="256" width="16" height="16"/>
+ <objectgroup id="4" name="Противники">
+  <object id="23" x="1088" y="272" width="16" height="16"/>
   <object id="24" x="1376" y="272" width="16" height="16"/>
   <object id="25" x="1632" y="288" width="16" height="16"/>
   <object id="26" x="2000" y="304" width="16" height="16"/>
@@ -47,9 +45,9 @@
  <objectgroup id="6" name="Переход на новые ">
   <object id="55" x="3904" y="208" width="48" height="96"/>
  </objectgroup>
- <layer id="7" name="Слой тайлов 2" width="250" height="25">
+ <layer id="8" name="Слой тайлов 2" width="250" height="25">
   <data encoding="base64" compression="zlib">
-   eJzt1lsNACAMA8ApwL9cLMAH2YM7BU3WNIsAAAAAAAAAAAAAAAAAAACA/6zsAADACH6KOdySbK87WLnjlbOd6J4f6M8OAQAAwL0NYIYAcQ==
+   eJzt1IEJADAMArD2/6f3w2B00uQCQbEKAAAAAAAAAAAAAAAAAAAAAHL1dABgLf+TTX/84OUO0zYuL8yz60x6AwAAgDsHJesACg==
   </data>
  </layer>
 </map>

@@ -16,12 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.neuron.game.gameLogic.contacts.userData.ObjectStatus;
 import com.neuron.game.gameLogic.contacts.userData.ObjectType;
-import com.neuron.game.gameLogic.objects.guns.PlayerGun;
 import com.neuron.game.gameLogic.objects.guns.Gun;
 import com.neuron.game.gameLogic.contacts.userData.SeeEnemy;
 import com.neuron.game.gameLogic.contacts.userData.SensorUserData;
 import com.neuron.game.gameLogic.contacts.userData.UserData;
-import com.neuron.game.gameLogic.states.PlayerStates.StandingState;
+import com.neuron.game.gameLogic.states.PersonStates.StandingState;
 import com.neuron.game.gameLogic.states.State;
 
 
@@ -34,20 +33,20 @@ public abstract class Person extends Actor {
     protected Animation jumpingAnimation;
     protected Animation currentAnimation;
 
-    protected int hp;
-    protected int maxHp;
-    protected boolean alive = true;
-    protected boolean isRunningRight = true;
-    protected boolean isGrounded;
-
-    protected final float maxVelocity;
-    protected float velocity;
-
     protected World world;
     protected Body body;
     protected Fixture fixture;
     protected Fixture NearSensorFixture;
     protected Fixture FarSensorFixture;
+
+
+    protected final int maxHp;
+    protected int hp;
+    protected final float maxVelocity;
+    protected float velocity;
+    protected boolean alive = true;
+    protected boolean isRunningRight = true;
+    protected boolean isGrounded;
 
     protected State state;
 
@@ -62,12 +61,13 @@ public abstract class Person extends Actor {
 
     protected Person(World world, int maxHp, float maxVelocity, TextureAtlas atlas, Vector2 position,
                      float sizeInMeters, ObjectType type, float X_PAD, float Y_PAD) {
+        this.world = world;
         this.maxHp = maxHp;
         this.maxVelocity = maxVelocity;
         this.X_PAD = X_PAD;
         this.Y_PAD = Y_PAD;
+
         hp = maxHp;
-        this.world = world;
         SIZE_IN_METERS = sizeInMeters;
         SIZE_IN_PIXELS = (int) (PIXELS_IN_METER * SIZE_IN_METERS);
 
@@ -82,17 +82,16 @@ public abstract class Person extends Actor {
     protected void createAnimations(TextureAtlas atlas) {
         Array<TextureRegion> frames = new Array<>();
         frames.add(new TextureRegion(atlas.findRegion("frame_" + 0)));
-        standingAnimation = new Animation(0.3f, frames);
-        frames.clear();
-//
-        for (int i = 2; i < 4; i++)
-            frames.add(new TextureRegion(atlas.findRegion("frame_" + i)));
-        runningAnimation = new Animation(0.2f, frames);
+        standingAnimation = new Animation(0.1f, frames);
         frames.clear();
 
-        for (int i = 1; i < 2; i++)
+        for (int i = 1; i < 4; i++)
             frames.add(new TextureRegion(atlas.findRegion("frame_" + i)));
-        jumpingAnimation = new Animation(0.1f, frames);
+        runningAnimation = new Animation(0.15f, frames);
+        frames.clear();
+
+        frames.add(new TextureRegion(atlas.findRegion("frame_" + 4)));
+        jumpingAnimation = new Animation(0.3f, frames);
         frames.clear();
     }
 
@@ -129,9 +128,7 @@ public abstract class Person extends Actor {
     }
 
 
-    public void createGun(Stage stage, TextureRegion bulletTexture) {
-        gun = new PlayerGun(world, this, stage, bulletTexture);
-    }
+    public abstract void createGun(Stage stage, TextureRegion bulletTexture);
 
     public void move(int direction) {
         velocity = maxVelocity * direction;
@@ -145,17 +142,21 @@ public abstract class Person extends Actor {
 
     public void jump() {
         if (isGrounded) {
-            ((UserData) body.getUserData()).setGrounded(false);
+            setGrounded(false);
             body.applyLinearImpulse(0, 20, body.getPosition().x, body.getPosition().y, true);
         }
     }
 
     private void climbToBlock() {
-        setGrounded(false);
-        float impulseX = 0.03f;
-        if (!isRunningRight)
-            impulseX *= -1;
-        body.applyLinearImpulse(impulseX, 10, body.getPosition().x, body.getPosition().y, true);
+        if (isGrounded) {
+            setGrounded(false);
+            float impulseX = 0.03f;
+            if (!isRunningRight)
+                impulseX *= -1;
+            body.applyLinearImpulse(impulseX, 10.5f, body.getPosition().x, body.getPosition().y, true);
+            ((UserData) body.getUserData()).setStatus(ObjectStatus.DEFAULT);
+        }
+        setGrounded(true);
     }
 
     public void setAnimation(State.states stateName) {
@@ -203,21 +204,18 @@ public abstract class Person extends Actor {
                     remove();
                 break;
             case CLIMB_TO_BLOCK:
-                if (isGrounded) {
-                    climbToBlock();
-                    data.setStatus(ObjectStatus.DEFAULT);
-                }
+                climbToBlock();
                 break;
             case HEALED:
-                if (hp + 20 <= maxHp)
-                    hp += 20;
+                if (hp + 25 <= maxHp)
+                    hp += 25;
                 else
                     hp = maxHp;
                 data.setStatus(ObjectStatus.DEFAULT);
                 break;
         }
-//        if (state.getType().equals(State.states.JumpingState))
-//            data.setStatus(ObjectStatus.DEFAULT);
+        if (state.getType().equals(State.states.JumpingState))
+            data.setStatus(ObjectStatus.DEFAULT);
     }
 
     public int getRealX() {

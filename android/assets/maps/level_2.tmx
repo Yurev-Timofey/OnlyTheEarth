@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="250" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="100">
+ <tileset firstgid="1" source="Set/Sand/Sand.tsx"/>
+ <layer id="1" name="Слой тайлов 1" width="250" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt18sOgjAQBVCWvp///69CTNQFEqqdUuCc5G5rW2Zq2zQAAAAAAJDmEjTuNWhcWBq98nSbegKBfONYEft7DxiTPNbybea6zqh7JaRSi2/uIQAAAAAAwFpsp54A8JNdm0NAjiUXAbz09fS+zSYgp57fSjkLzllWDPM1pgdK9nTkWVD6zuBtMsz+/L8HOe/QtfV0jeeEd8qwHPUYvS+5731R79i19eZS0505nzU91f/eUN2n1nCOevx2Fqf0f4ne04MyNjXdL2qv4ZS9qmneIiIiIjLvPAB40y8T
+  </data>
+ </layer>
+ <objectgroup id="2" name="Земля">
+  <object id="1" x="0" y="320" width="16" height="16"/>
+  <object id="2" x="16" y="336" width="16" height="16"/>
+  <object id="5" x="32" y="352" width="624" height="16"/>
+  <object id="74" x="656" y="336" width="192" height="16"/>
+  <object id="75" x="848" y="320" width="288" height="16"/>
+  <object id="76" x="1136" y="336" width="96" height="16"/>
+  <object id="77" x="1232" y="352" width="160" height="16"/>
+  <object id="78" x="1392" y="336" width="432" height="16"/>
+  <object id="79" x="1824" y="320" width="400" height="16"/>
+  <object id="80" x="2224" y="304" width="304" height="16"/>
+  <object id="81" x="2528" y="288" width="80" height="16"/>
+  <object id="82" x="2608" y="272" width="80" height="16"/>
+  <object id="84" x="2688" y="256" width="368" height="16"/>
+  <object id="85" x="3056" y="272" width="144" height="16"/>
+  <object id="86" x="3200" y="288" width="256" height="16"/>
+  <object id="89" x="3456" y="304" width="544" height="16"/>
+ </objectgroup>
+ <objectgroup id="3" name="Невидимые стены">
+  <object id="20" x="-16" y="0" width="16" height="400"/>
+  <object id="21" x="4000" y="0" width="16" height="400"/>
+  <object id="22" x="-16" y="-16" width="4032" height="16"/>
+ </objectgroup>
+ <objectgroup id="4" name="Противники">
+  <object id="90" x="2032" y="304" width="16" height="16"/>
+  <object id="91" x="1184" y="320" width="16" height="16"/>
+  <object id="93" x="1568" y="320" width="16" height="16"/>
+  <object id="94" x="816" y="320" width="16" height="16"/>
+  <object id="95" x="2528" y="272" width="16" height="16"/>
+  <object id="96" x="2784" y="240" width="16" height="16"/>
+  <object id="97" x="3120" y="256" width="16" height="16"/>
+  <object id="98" x="3344" y="272" width="16" height="16"/>
+  <object id="99" x="3680" y="288" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="5" name="Игрок">
+  <object id="35" x="160" y="336" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="6" name="Переход на новые ">
+  <object id="55" x="3904" y="208" width="48" height="96"/>
+ </objectgroup>
+</map>

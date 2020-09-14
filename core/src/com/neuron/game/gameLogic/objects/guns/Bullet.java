@@ -29,7 +29,7 @@ public class Bullet extends MyActor {
 
         createBody(world);
 
-        body.applyLinearImpulse(0.6f * direction, (float) (Math.random() * 0.07 - 0.035), body.getPosition().x, body.getPosition().y, true);
+        body.applyLinearImpulse(0.8f * direction, (float) (Math.random() * 0.07 - 0.035), body.getPosition().x, body.getPosition().y, true);
 
         stage.addActor(this);
     }

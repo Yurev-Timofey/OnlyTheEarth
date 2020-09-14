@@ -19,7 +19,7 @@ public class OnlyTheEarth extends Game {
         //Создание шрифта игры
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/pixelSurNormal.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = (int) (Configuration.SCREEN_HEIGHT / 16.5); // Размер шрифта
+        param.size = Gdx.graphics.getWidth() / 55; // Размер шрифта
         param.mono = true; //Отключение сглаживания шрифта
         param.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.:;,{}:\"´`'<>";
         gameFont = generator.generateFont(param);

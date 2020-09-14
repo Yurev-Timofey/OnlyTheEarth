@@ -39,19 +39,19 @@ public class MenuScreen implements Screen {
     public MenuScreen(final OnlyTheEarth game) {
         this.game = game;
 
-        String path;
-        if (Configuration.aspectRatio > 1.9)
-            path = "18_9";
-        else if (Configuration.aspectRatio > 1.7)
-            path = "16_9";
-        else
-            path = "4_3";
+//        String path;
+//        if (Configuration.aspectRatio > 1.9)
+//            path = "18_9";
+//        else if (Configuration.aspectRatio > 1.7)
+//            path = "16_9";
+//        else
+//            path = "4_3";
 
-        loadAssets(path);
+        loadAssets();
 
-        music = assetManager.get("music/mainTheme.mp3", Music.class); //Музыка
-        music.play();
-        music.setLooping(true);
+//        music = assetManager.get("music/mainTheme.mp3", Music.class); //Музыка
+//        music.play();
+//        music.setLooping(true);
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
@@ -69,12 +69,11 @@ public class MenuScreen implements Screen {
                 assetManager.get("animations/Logo.atlas", TextureAtlas.class), Gdx.graphics.getHeight() / 80));
     }
 
-    private void loadAssets(String path) {
+    private void loadAssets() {
         assetManager = new AssetManager();
 
-        assetManager.load("music/mainTheme.mp3", Music.class);
+//        assetManager.load("music/mainTheme.mp3", Music.class);
         assetManager.load("images/MenuButtons.atlas", TextureAtlas.class);
-        assetManager.load("images/mainMenuBack" + path + ".png", Texture.class);
         assetManager.load("animations/Logo.atlas", TextureAtlas.class);
 
         assetManager.finishLoading();
@@ -165,7 +164,7 @@ public class MenuScreen implements Screen {
                 else
                     Configuration.volume -= 0.2f;
                 volume.setText("Громкость:" + Math.round(Configuration.volume * 100) + '%');
-                music.setVolume(Configuration.volume);
+//                music.setVolume(Configuration.volume);
             }
         });
 
@@ -214,7 +213,7 @@ public class MenuScreen implements Screen {
         camera.update();
 
         // Очищаем экран и устанавливаем цвет фона черным
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Рисуем сцену
@@ -244,7 +243,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        music.dispose();
+//        music.dispose();
         assetManager.dispose();
     }
 }

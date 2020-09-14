@@ -15,21 +15,20 @@ import com.neuron.game.gameLogic.states.State;
 import static com.neuron.game.Configuration.PIXELS_IN_METER;
 
 public abstract class Gun implements Disposable {
-    Person person;
-    Sound fireSound;
-    World world;
-    TextureRegion bulletTexture;
-    boolean firing = false;
-    Stage stage;
+    private Person person;
+    private Sound fireSound;
+    private World world;
+    private TextureRegion bulletTexture;
+    private boolean firing = false;
+    private Stage stage;
+    private int direction;
+    private float timeSinceLastShoot;
+    private Vector2 bulletStartPoint;
 
     float fireRate;
-    int direction;
-    float timeSinceLastShoot;
 
 
-    public Vector2 bulletStartPoint;
-
-    public Gun(World world, Person person, Stage stage, TextureRegion bulletTexture) {
+    Gun(World world, Person person, Stage stage, TextureRegion bulletTexture) {
         this.person = person;
         this.world = world;
         this.bulletTexture = bulletTexture;
@@ -53,10 +52,10 @@ public abstract class Gun implements Disposable {
         else
             direction = -1;
 
-        if (direction == -1)
-            bulletStartPoint = new Vector2(person.getX() / PIXELS_IN_METER, (person.getY() + person.getHeight() / 2) / PIXELS_IN_METER - 5);
-        else
+        if (direction == 1)
             bulletStartPoint = new Vector2((person.getX() + person.getWidth()) / PIXELS_IN_METER, (person.getY() + person.getHeight() / 2 - 5) / PIXELS_IN_METER);
+        else
+            bulletStartPoint = new Vector2(person.getX() / PIXELS_IN_METER, (person.getY() + person.getHeight() / 2 - 5) / PIXELS_IN_METER);
 
         if (firing)
             fire();
@@ -69,6 +68,7 @@ public abstract class Gun implements Disposable {
         world = null;
         bulletTexture = null;
     }
+
     //    @Override
 //    public void draw(Batch batch, float parentAlpha) {
 //

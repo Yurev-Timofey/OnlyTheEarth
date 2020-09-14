@@ -97,7 +97,7 @@ public class Hud extends Group {
         return button;
     }
 
-    public void gameOver(Stage stage, BitmapFont font) {
+    public void gameOver(Stage stage, BitmapFont font, boolean gameWin) {
         buttonsTable.remove();
         hpFrame.remove();
         hpBar.remove();
@@ -105,26 +105,19 @@ public class Hud extends Group {
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = font;
 
-        Label gameOver = new Label("ИГРА ОКОНЧЕНА", style);
+        String text;
+        if (gameWin) {
+            text = "ВЫ ПРОШЛИ ИГРУ!";
+            gameWinLabelCreated = true;
+        } else {
+            text = "ИГРА ОКОНЧЕНА";
+            gameOverLabelCreated = true;
+        }
+
+        Label gameOver = new Label(text, style);
         gameOver.setPosition(Configuration.viewportLeft + position + (Configuration.viewportWidth - gameOver.getMinWidth()) / 2,
                 (Configuration.viewportHeight - gameOver.getMinHeight()) / 2);
         stage.addActor(gameOver);
-        gameOverLabelCreated = true;
-    }
-
-    public void gameWin(Stage stage, BitmapFont font){
-        buttonsTable.remove();
-        hpFrame.remove();
-        hpBar.remove();
-
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = font;
-
-        Label gameOver = new Label("ВЫ ПРОШЛИ ИГРУ!", style);
-        gameOver.setPosition(Configuration.viewportLeft + position + (Configuration.viewportWidth - gameOver.getMinWidth()) / 2,
-                (Configuration.viewportHeight - gameOver.getMinHeight()) / 2);
-        stage.addActor(gameOver);
-        gameWinLabelCreated = true;
     }
 
     public boolean isGameOverLabelCreated() {
@@ -138,7 +131,7 @@ public class Hud extends Group {
     @Override
     public void act(float delta) {
         super.act(delta);
-        setZIndex(getStage().getActors().size - 1);
+        setZIndex(getStage().getActors().size - 2);
     }
 
     @Override

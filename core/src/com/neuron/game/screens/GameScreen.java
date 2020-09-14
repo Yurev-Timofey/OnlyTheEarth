@@ -36,6 +36,7 @@ import com.neuron.game.gameLogic.contacts.userData.ObjectType;
 import com.neuron.game.gameLogic.objects.persons.Player;
 import com.neuron.game.gameLogic.contacts.MyContactFilter;
 import com.neuron.game.gameLogic.contacts.MyContactListener;
+import com.neuron.game.gameLogic.objects.persons.enemy.Bandit;
 
 import static com.neuron.game.Configuration.PIXELS_IN_METER;
 
@@ -49,8 +50,8 @@ public class GameScreen implements Screen {
 
     private final OrthographicCamera camera;
     private final FillViewport viewport;
-    private final OrthographicCamera debugCamera;
-    private final Box2DDebugRenderer debugRenderer;
+//    private final OrthographicCamera debugCamera;
+//    private final Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer mapRenderer;
     private TiledMap map;
 
@@ -71,8 +72,8 @@ public class GameScreen implements Screen {
         stage = new Stage(viewport);
 
         //DEBUG
-        debugCamera = new OrthographicCamera();
-        debugRenderer = new Box2DDebugRenderer();
+//        debugCamera = new OrthographicCamera();
+//        debugRenderer = new Box2DDebugRenderer();
 
         nextLevel();
     }
@@ -81,9 +82,8 @@ public class GameScreen implements Screen {
         assetManager = new AssetManager();
 
         assetManager.load("images/Hud.atlas", TextureAtlas.class);
-        assetManager.load("images/groundBlock.png", Texture.class);
+        assetManager.load("animations/enemyWithAutoGun.atlas", TextureAtlas.class);
         assetManager.load("animations/player.atlas", TextureAtlas.class);
-        assetManager.load("animations/skeleton.atlas", TextureAtlas.class);
         assetManager.load("animations/heart.atlas", TextureAtlas.class);
         assetManager.load("animations/portal.atlas", TextureAtlas.class);
         assetManager.load("images/bullet.png", Texture.class);
@@ -99,8 +99,9 @@ public class GameScreen implements Screen {
             map = mapLoader.load("maps/level_" + currentLevel + ".tmx");
             mapRenderer = new OrthogonalTiledMapRenderer(map);
         } catch (Exception ex) {
+            ex.printStackTrace();
             if (!hud.isGameWinLabelCreated()) {
-                hud.gameWin(stage, game.gameFont);
+                hud.gameOver(stage, game.gameFont, true);
                 stage.addListener(new ClickListener() {
                     @Override
                     public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -110,6 +111,7 @@ public class GameScreen implements Screen {
             }
             return;
         }
+
         if (world != null) {
             stage.clear();
             world.dispose();
@@ -117,7 +119,7 @@ public class GameScreen implements Screen {
         }
 
         camera.position.set(Configuration.SCREEN_WIDTH / 2, Configuration.SCREEN_HEIGHT / 2, 0);
-        debugCamera.setToOrtho(false, Configuration.SCREEN_WIDTH / PIXELS_IN_METER, Configuration.SCREEN_HEIGHT / PIXELS_IN_METER);
+//        debugCamera.setToOrtho(false, Configuration.SCREEN_WIDTH / PIXELS_IN_METER, Configuration.SCREEN_HEIGHT / PIXELS_IN_METER);
 
         createLevel();
         hud = new Hud(assetManager.get("images/Hud.atlas", TextureAtlas.class), viewport, player);
@@ -170,15 +172,15 @@ public class GameScreen implements Screen {
         stage.addActor(player);
         player.createGun(stage, (new TextureRegion(assetManager.get("images/bullet.png", Texture.class))));
 
-        /*Skeletons*/
-//        for (MapObject object : map.getLayers().get(3).getObjects()) {
-//            Rectangle skeletonPos = ((RectangleMapObject) object).getRectangle();
-//            Skeleton skeleton = new Skeleton(world, assetManager.get("animations/skeleton.atlas", TextureAtlas.class),
-//                    new Vector2(skeletonPos.getX() / PIXELS_IN_METER, (skeletonPos.getY() / PIXELS_IN_METER) + 0.1f),
-//                    assetManager.get("animations/heart.atlas", TextureAtlas.class));
-//            stage.addActor(skeleton);
-//            skeleton.createGun(stage, (new TextureRegion(assetManager.get("images/bullet.png", Texture.class))));
-//        }
+        /*Enemy*/
+        for (MapObject object : map.getLayers().get(3).getObjects()) {
+            Rectangle skeletonPos = ((RectangleMapObject) object).getRectangle();
+            Bandit bandit = new Bandit(world, assetManager.get("animations/enemyWithAutoGun.atlas", TextureAtlas.class),
+                    new Vector2(skeletonPos.getX() / PIXELS_IN_METER, (skeletonPos.getY() / PIXELS_IN_METER) + 0.1f),
+                    assetManager.get("animations/heart.atlas", TextureAtlas.class));
+            stage.addActor(bandit);
+            bandit.createGun(stage, (new TextureRegion(assetManager.get("images/bullet.png", Texture.class))));
+        }
 
         /*Переход на новый уровень*/
         for (MapObject object : map.getLayers().get(5).getObjects()) {
@@ -218,7 +220,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         if (!player.isAlive() && !hud.isGameOverLabelCreated()) {
-            hud.gameOver(stage, game.menuFont);
+            hud.gameOver(stage, game.gameFont, false);
             stage.addListener(new ClickListener() {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -229,7 +231,6 @@ public class GameScreen implements Screen {
         } else if (((UserData) nextLevelJump.getUserData()).getStatus().equals(ObjectStatus.JUMP_TO_NEXT_LEVEL)) {
             nextLevel();
         }
-//        if (!hud.isGameWinLabelCreated())
 
         Gdx.gl.glClearColor(0.38f, 0.61f, 0.85f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -239,18 +240,21 @@ public class GameScreen implements Screen {
         if ((player.getRealX() + (float) (player.getSizeInPixels() / 2) - Configuration.viewportLeft >= Configuration.viewportWidth / 2) &&
                 (player.getRealX() + (float) (player.getSizeInPixels() / 2) <= LEVEL_LENGTH - Configuration.viewportWidth / 2)) {
             camera.position.set(player.getRealX() + (float) (player.getSizeInPixels() / 2), camera.position.y, 0);
-            debugCamera.position.set((player.getRealX() + (float) (player.getSizeInPixels() / 2)) / PIXELS_IN_METER, debugCamera.position.y, 0);
+//            debugCamera.position.set((player.getRealX() + (float) (player.getSizeInPixels() / 2)) / PIXELS_IN_METER, debugCamera.position.y, 0);
             hud.setPosition(player.getRealX() - (Configuration.SCREEN_WIDTH - player.getSizeInPixels()) / 2, 0);
         }
-        mapRenderer.setView(camera);
-        mapRenderer.render();
 
+        float width = camera.viewportWidth * camera.zoom;
+        float height = camera.viewportHeight * camera.zoom;
+        float w = width * 1.5f * Math.abs(camera.up.y) + height * Math.abs(camera.up.x);
+        float h = height * Math.abs(camera.up.y) + width * Math.abs(camera.up.x);
+        mapRenderer.setView(camera.combined, camera.position.x - w / 2, camera.position.y - h / 2, w, h);
+        mapRenderer.render();
 
         stage.draw();
 
-
         //DEBUG
-        debugCamera.update();
+//        debugCamera.update();
 //        debugRenderer.render(world, debugCamera.combined);
     }
 
